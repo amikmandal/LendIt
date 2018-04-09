@@ -20,4 +20,23 @@
     <string name="facebook_app_id">1789564747753653</string>
     <string name="fb_login_protocol_scheme">fb1789564747753653</string>
 
+
+    <string-array name="peopleNames">
+        <item>Barton Hollow</item>
+        <item>The Human Condition</item>
+        <item>Coloring Book</item>
+    </string-array>
+
+    <string-array name="objectNames">
+        <item>The Civil Wars</item>
+        <item>Jon Bellion</item>
+        <item>Chance the Rapper</item>
+    </string-array>
+
+    <string-array name="dates">
+        <item>The Civil Wars</item>
+        <item>Jon Bellion</item>
+        <item>Chance the Rapper</item>
+    </string-array>
+
 </resources>

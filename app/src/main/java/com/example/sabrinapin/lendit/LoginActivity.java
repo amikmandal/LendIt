@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity  {
     CallbackManager callbackManager;
 
 
-    //BIG PROBLEM WITH COMING BACK IN AFTER ALREADY LOGGING IN
+    //TODO BIG PROBLEM WITH COMING BACK IN AFTER ALREADY LOGGING IN
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

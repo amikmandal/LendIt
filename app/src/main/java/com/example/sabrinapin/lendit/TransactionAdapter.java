@@ -1,6 +1,7 @@
 package com.example.sabrinapin.lendit;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 /**
  * Created by sabrinapin on 4/7/18.
  */
@@ -18,6 +21,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     final Context mContext;
     String[] mPeople;
+    String [] mDates;
     String[] mObjects;
 
 
@@ -31,8 +35,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         transactionHolder.mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //this stuff comes from album holder . xml
-//                openAlbum(mAlbums[albumHolder.getAdapterPosition()], mArtists[albumHolder.getAdapterPosition()]);
+                //TODO info button activity
             }
         });
 
@@ -40,14 +43,24 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int pos) {
+        Drawable objectArtwork;
+        Drawable infoArtwork = mContext.getDrawable(android.R.drawable.ic_dialog_info);
+        int drawableId = mContext.getResources().getIdentifier("bible", "drawable", mContext.getPackageName());
+        objectArtwork = mContext.getDrawable(drawableId);
+        holder.mImageView.setImageDrawable(objectArtwork);
+        holder.mButton.setImageDrawable(infoArtwork);
+        holder.mDate.setText(mDates[pos]);
+        holder.mPerson.setText(mPeople[pos]);
+        holder.mObject.setText(mObjects[pos]);
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mPeople.length;
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout mLinearLayout;
@@ -55,6 +68,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         TextView mDate;
         TextView mPerson;
         ImageButton mButton;
+        TextView mObject;
 
 
         public ViewHolder(View itemView) {
@@ -69,17 +83,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             this.mPerson = itemView.findViewById(R.id.mPerson);
             this.mDate = itemView.findViewById(R.id.mDate);
             this.mButton = itemView.findViewById(R.id.mButton);
+            this.mObject = itemView.findViewById(R.id.mObject);
 
 
         }
 
     }
 
-    public TransactionAdapter(Context c, String[] people, String[] objects) {
+    public TransactionAdapter(Context c, String[] people, String[] objects, String[] dates) {
         mContext = c;
         mPeople = people;
         mObjects = objects;
-
+        mDates = dates;
     }
 
 }
