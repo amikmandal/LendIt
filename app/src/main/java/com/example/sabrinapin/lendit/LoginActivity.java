@@ -3,7 +3,9 @@ package com.example.sabrinapin.lendit;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -27,6 +29,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -53,6 +56,8 @@ public class LoginActivity extends AppCompatActivity  {
     LoginButton loginButton;
     TextView textView;
     CallbackManager callbackManager;
+    CheckBox checkBox;
+    SharedPreferences sharedPref;
 
 
     //TODO BIG PROBLEM WITH COMING BACK IN AFTER ALREADY LOGGING IN
@@ -60,6 +65,16 @@ public class LoginActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+
+        if(sharedPref.contains("user")) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("username", sharedPref.getString("user", null));
+            this.startActivity(intent);
+        }
+
         FacebookSdk.sdkInitialize(getApplicationContext());
        // AppEventsLogger.activateApp(this);
         //setContentView(R.layout.activity_login);
@@ -68,6 +83,7 @@ public class LoginActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_login);
         loginButton = (LoginButton)findViewById(R.id.login_button);
         textView = (TextView)findViewById(R.id.textView);
+        checkBox = (CheckBox)findViewById(R.id.login_check_box);
        // loginButton = (LoginButton)findViewById(R.id.login_button);
 
 
@@ -83,6 +99,10 @@ public class LoginActivity extends AppCompatActivity  {
                                 "Auth Token: "
                                 + loginResult.getAccessToken().getToken()
                 );
+
+                if(checkBox.isChecked())  {
+                    sharedPref.edit().putString("user", loginResult.getAccessToken().getUserId()).commit();
+                }
 
                 //continues to nextActivity, which is MainActivity
                 nextActivity();
