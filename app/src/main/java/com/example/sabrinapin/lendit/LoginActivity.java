@@ -60,8 +60,6 @@ public class LoginActivity extends AppCompatActivity  {
     SharedPreferences sharedPref;
 
 
-    //TODO BIG PROBLEM WITH COMING BACK IN AFTER ALREADY LOGGING IN
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
