@@ -1,6 +1,7 @@
 package com.example.sabrinapin.lendit;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     String[] mPeople;
     String [] mDates;
     String[] mObjects;
+    Bitmap[] mImages;
 
 
     @Override
@@ -44,11 +46,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int pos) {
-        Drawable objectArtwork;
         Drawable infoArtwork = mContext.getDrawable(android.R.drawable.ic_dialog_info);
-        int drawableId = mContext.getResources().getIdentifier("bible", "drawable", mContext.getPackageName());
-        objectArtwork = mContext.getDrawable(drawableId);
-        holder.mImageView.setImageDrawable(objectArtwork);
+
+        holder.mImageView.setImageBitmap(mImages[pos]);
         holder.mButton.setImageDrawable(infoArtwork);
         holder.mDate.setText(mDates[pos]);
         holder.mPerson.setText(mPeople[pos]);
@@ -90,11 +90,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     }
 
-    public TransactionAdapter(Context c, String[] people, String[] objects, String[] dates) {
+    public TransactionAdapter(Context c, String[] people, String[] objects, String[] dates, Bitmap[] images) {
         mContext = c;
         mPeople = people;
         mObjects = objects;
         mDates = dates;
+        mImages = images;
     }
 
 }

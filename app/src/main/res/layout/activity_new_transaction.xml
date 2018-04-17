@@ -8,90 +8,110 @@
 
     <EditText
         android:id="@+id/editOwner"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="26dp"
+        android:layout_above="@+id/editItem"
+        android:layout_alignStart="@+id/editItem"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Owner Name:" />
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/editItem"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="88dp"
+        android:layout_above="@+id/addToCalendar"
+        android:layout_toEndOf="@+id/returnDate"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Item Name:" />
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/takePicture"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/editOwner"
-        android:layout_marginTop="201dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="199dp"
         android:text="Take Picture" />
 
-    <Button
-        android:id="@+id/uploadPicture"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/editOwner"
-        android:layout_alignTop="@+id/takePicture"
-        android:text="Upload Picture" />
-
     <EditText
-        android:id="@+id/editText3"
-        android:layout_width="83dp"
+        android:id="@+id/selectDate"
+        android:layout_width="152dp"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView4"
-        android:layout_toEndOf="@+id/textView4"
+        android:layout_above="@+id/takePicture"
+        android:layout_alignEnd="@+id/objectImage"
+        android:layout_marginBottom="-199dp"
+        android:layout_marginEnd="-33dp"
         android:ems="10"
         android:inputType="date" />
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="100dp"
+        android:id="@+id/returnDate"
+        android:layout_width="107dp"
         android:layout_height="46dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/editOwner"
-        android:layout_marginTop="144dp"
+        android:layout_above="@+id/takePicture"
+        android:layout_marginBottom="-199dp"
+        android:layout_toStartOf="@+id/objectImage"
+        android:gravity="center"
         android:text="Return Date:"
         android:textAlignment="center"
-        android:gravity="center"/>
+        android:textSize="18sp" />
 
     <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
+        android:id="@+id/addToCalendar"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/editText3"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="55dp"
-        android:text="Button" />
+        android:layout_above="@+id/takePicture"
+        android:layout_alignEnd="@+id/editOwner"
+        android:layout_marginBottom="-199dp"
+        android:text="Add To Calendar"
+        android:textSize="7sp" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/completeTransaction"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_above="@+id/textView6"
+        android:layout_above="@+id/cancelTransaction"
         android:layout_alignParentStart="true"
         android:background="#00FF00"
         android:gravity="center"
         android:text="Complete Transaction" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/cancelTransaction"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:text="Cancel"
+        android:text="Cancel Transaction"
         android:gravity="center"
         android:background="#FF0000"/>
+
+    <ImageView
+        android:id="@+id/objectImage"
+        android:layout_width="120dp"
+        android:layout_height="130dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="123dp" />
+
+    <TextView
+        android:id="@+id/ownerText"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_above="@+id/itemText"
+        android:layout_alignStart="@+id/returnDate"
+        android:gravity="center"
+        android:text="Owner Name:"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/itemText"
+        android:layout_width="107dp"
+        android:layout_height="46dp"
+        android:layout_above="@+id/addToCalendar"
+        android:layout_alignStart="@+id/returnDate"
+        android:gravity="center"
+        android:text="Item Name:"
+        android:textSize="18sp" />
 
 </RelativeLayout>
