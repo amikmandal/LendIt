@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,64 +34,130 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookActivity;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.Login;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity  {
 
 
     LoginButton loginButton;
     TextView textView;
     CallbackManager callbackManager;
-    CheckBox checkBox;
     SharedPreferences sharedPref;
+    //user's name
 
+    //userID
+
+    public static String loginDecision = "loginInfo";
+    public static String userID;
+    public static String USER_FIRST_NAME;
+    public static String USER_LAST_NAME;
+    public static User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //setting the shared preferences under the name loginDecision - naming the table
+        sharedPref= getSharedPreferences(loginDecision, MODE_PRIVATE);
 
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-
+        //if user was already logged in, it will go straight to main
         if(sharedPref.contains("user")) {
+            Log.d("user---------", sharedPref.getString("user", null));
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("username", sharedPref.getString("user", null));
             this.startActivity(intent);
+            finish();
         }
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-       // AppEventsLogger.activateApp(this);
-        //setContentView(R.layout.activity_login);
-
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_login);
+
         loginButton = (LoginButton)findViewById(R.id.login_button);
+
         textView = (TextView)findViewById(R.id.textView);
-        checkBox = (CheckBox)findViewById(R.id.login_check_box);
-       // loginButton = (LoginButton)findViewById(R.id.login_button);
 
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
+                //puts "user" in shared pref to make sure that MainActivity will come up first until logged out
+                sharedPref.edit().putString("user", loginResult.getAccessToken().getUserId()).commit();
+
+                //gets profile
+                AccessToken accessToken = loginResult.getAccessToken();
+
+                //saves User ID
+                userID = loginResult.getAccessToken().getUserId();
+
                 //When login results are successful it displays the user's name
+
+
+                //Testing from stackOverflow
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+
+                                try {
+                                    USER_FIRST_NAME = object.getString("first_name");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    USER_LAST_NAME = object.getString("last_name");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Log.v("LoginActivity", response.getRawResponse());
+                                Log.v("AccessToken", AccessToken.getCurrentAccessToken().getToken());
+                                try {
+                                    Log.d("FIRST NAME", object.getString("first_name"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,first_name,last_name");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+                //made a user object
+                mUser = new User(USER_FIRST_NAME, USER_LAST_NAME, userID);
+
                 textView.setText(
                         "User ID: "
                                 + loginResult.getAccessToken().getUserId()
@@ -98,12 +166,9 @@ public class LoginActivity extends AppCompatActivity  {
                                 + loginResult.getAccessToken().getToken()
                 );
 
-                if(checkBox.isChecked())  {
-                    sharedPref.edit().putString("user", loginResult.getAccessToken().getUserId()).commit();
-                }
 
                 //continues to nextActivity, which is MainActivity
-                nextActivity();
+               nextActivity();
 
             }
 
@@ -128,11 +193,15 @@ public class LoginActivity extends AppCompatActivity  {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+
+
     private void nextActivity(){
         //only called when login is Successful
         //takes in current info then goes to MainActivity
         Intent main = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(main);
+        //when you press back arrow it will end
+        finish();
     }
 
 

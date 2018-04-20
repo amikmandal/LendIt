@@ -14,11 +14,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.facebook.login.LoginManager;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+
+import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
+import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
+import static com.example.sabrinapin.lendit.LoginActivity.mUser;
+import static com.example.sabrinapin.lendit.LoginActivity.userID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int GET_TRANSACTION = 0;
     private ArrayList<Transaction> transactionList;
     private TextView mTextMessage;
+    private Button logout;
     private static final String TAG = "MainActivity";
     private TransactionAdapter mAdapter;
     String[] mPeople;
@@ -59,6 +70,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        logout = findViewById(R.id.button2);
+        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logOut();
+            }
+        });
+
+        Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
         transactionList = new ArrayList<Transaction>();
 
         mPeople = new String[transactionList.size()];
@@ -76,6 +98,16 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+    }
+
+    private void logOut() {
+        LoginManager.getInstance().logOut();
+        //changes share preference so that 'user' is no longer there
+        getSharedPreferences(LoginActivity.loginDecision, MODE_PRIVATE).edit().remove("user").commit();
+
+        //takes us back to LoginActivity
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     public void addTransaction(Transaction tr) {transactionList.add(tr);}
