@@ -70,9 +70,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = getIntent();
+        USER_FIRST_NAME = intent.getStringExtra("firstname");
+        USER_LAST_NAME = intent.getStringExtra("lastname");
+        userID = intent.getStringExtra("id");
 
         logout = findViewById(R.id.button2);
-        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME);
+        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME+" "+userID);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
         transactionList = new ArrayList<Transaction>();
 
         mPeople = new String[transactionList.size()];

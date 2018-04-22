@@ -89,6 +89,10 @@ public class LoginActivity extends AppCompatActivity  {
             Log.d("user---------", sharedPref.getString("user", null));
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("username", sharedPref.getString("user", null));
+            Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
+            intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
+            intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
+            intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
             this.startActivity(intent);
             finish();
         }
@@ -108,6 +112,7 @@ public class LoginActivity extends AppCompatActivity  {
 
                 //puts "user" in shared pref to make sure that MainActivity will come up first until logged out
                 sharedPref.edit().putString("user", loginResult.getAccessToken().getUserId()).commit();
+                //Toast.makeText(LoginActivity.this, loginResult.getAccessToken().getUserId(), Toast.LENGTH_SHORT).show();
 
                 //gets profile
                 AccessToken accessToken = loginResult.getAccessToken();
@@ -132,12 +137,15 @@ public class LoginActivity extends AppCompatActivity  {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                sharedPref.edit().putString("firstName", USER_FIRST_NAME).commit();
+                                //Toast.makeText(LoginActivity.this, USER_FIRST_NAME, Toast.LENGTH_SHORT).show();
 
                                 try {
                                     USER_LAST_NAME = object.getString("last_name");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                sharedPref.edit().putString("lastName", USER_LAST_NAME).commit();
 
                                 Log.v("LoginActivity", response.getRawResponse());
                                 Log.v("AccessToken", AccessToken.getCurrentAccessToken().getToken());
@@ -198,13 +206,18 @@ public class LoginActivity extends AppCompatActivity  {
     private void nextActivity(){
         //only called when login is Successful
         //takes in current info then goes to MainActivity
-        Intent main = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(main);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+        intent.putExtra("firstname", sharedPref.getString("firstName", "Swathi"));
+        intent.putExtra("lastname", sharedPref.getString("lastName","Ramprasad"));
+        intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
+        startActivity(intent);
+
         //when you press back arrow it will end
         finish();
     }
 
 
-
 }
+
 

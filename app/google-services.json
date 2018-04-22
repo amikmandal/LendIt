@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "694536516963",
+    "firebase_url": "https://lendit-4a3b7.firebaseio.com",
+    "project_id": "lendit-4a3b7",
+    "storage_bucket": "lendit-4a3b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694536516963:android:b4bc348f3a4da791",
+        "android_client_info": {
+          "package_name": "com.example.sabrinapin.lendit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "694536516963-7iou8so5i0o60kpt0bdu53gs9b4ioovv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sabrinapin.lendit",
+            "certificate_hash": "241a0d2c6d52151174a635646413ea5fbf77ade1"
+          }
+        },
+        {
+          "client_id": "694536516963-j336rlj14oii5fap0f4a70vejjk29tkd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQkpLd-pcpCkzaBhNf67vfx6x4pdqjYq4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "694536516963-j336rlj14oii5fap0f4a70vejjk29tkd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

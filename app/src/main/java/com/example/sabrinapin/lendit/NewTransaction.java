@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,9 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.support.v4.content.FileProvider;
 
-import java.io.ByteArrayOutputStream;
+import com.firebase.client.Firebase;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -30,7 +29,7 @@ import java.util.Date;
 public class NewTransaction extends AppCompatActivity {
 
 
-    EditText mOwner, mItem, mDate;
+    EditText mOwner, mItem, mDate, mBorrower;
     Button mTakePicture, mUploadPicture, mAddToCalendar;
     TextView mReturnDate, mCompleteTransaction, mCancelTransaction;
     ImageView mObjectView;
@@ -40,6 +39,7 @@ public class NewTransaction extends AppCompatActivity {
     private String mCurrentPhotoPath;
     private static final String TAG = NewTransaction.class.getSimpleName();
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private Firebase mRef;
     private static final int REQUEST_READ_PHONE_STATE = 2;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -54,13 +54,17 @@ public class NewTransaction extends AppCompatActivity {
 
         mOwner = findViewById(R.id.editOwner);
         mItem = findViewById(R.id.editItem);
+        mBorrower = findViewById(R.id.BorrowerName);
         mDate = findViewById(R.id.selectDate);
         mTakePicture = findViewById(R.id.takePicture);
         mAddToCalendar = findViewById(R.id.addToCalendar);
         mReturnDate = findViewById(R.id.returnDate);
-        mCompleteTransaction = findViewById(R.id.completeTransaction);
         mCancelTransaction = findViewById(R.id.cancelTransaction);
         mObjectView = findViewById(R.id.objectImage);
+        Firebase.setAndroidContext(this);
+        mRef = new Firebase("https://lendit-af1e0.firebaseio.com/");
+        mCompleteTransaction = findViewById(R.id.completeTransaction);
+
 
         final Activity thisActivity = this;
         mTakePicture.setOnClickListener(new View.OnClickListener() {
@@ -74,26 +78,40 @@ public class NewTransaction extends AppCompatActivity {
         mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int permissionCheck = ContextCompat.checkSelfPermission(thisActivity, Manifest.permission.READ_PHONE_STATE);
 
-                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(thisActivity,
-                            new String[]{Manifest.permission.READ_PHONE_STATE},
-                            REQUEST_READ_PHONE_STATE);
-                }
+                Firebase refTransaction =mRef.push();
+                refTransaction.setValue("userId here");
+                Firebase borrowerChild = refTransaction.child("borrower");
+                borrowerChild.setValue(mBorrower.getText().toString());
+                Firebase dateChild =refTransaction.child("date");
+                dateChild.setValue(mDate.getText().toString());
+                Firebase ownerChild =refTransaction.child("owner");
+                ownerChild.setValue(mOwner.getText().toString());
+                Firebase itemChild = refTransaction.child("item");
+                itemChild.setValue(mItem.getText().toString());
 
 
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                mImageBitmap.recycle();
-                //TODO make transaction
-                Transaction tr = new Transaction(mOwner.getText().toString(), mItem.getText().toString(), mDate.getText().toString(), byteArray);
-                Intent receivedIntent = new Intent(NewTransaction.this, MainActivity.class);
-                receivedIntent.putExtra("newTransaction", tr);
-                setResult(Activity.RESULT_OK, receivedIntent);
-                finish();
-                //TODO idk how to handle uploading transactions and refreshing the feed
+//                int permissionCheck = ContextCompat.checkSelfPermission(thisActivity, Manifest.permission.READ_PHONE_STATE);
+//
+//                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+////                    ActivityCompat.requestPermissions(thisActivity,
+////                            new String[]{Manifest.permission.READ_PHONE_STATE},
+//                            REQUEST_READ_PHONE_STATE);
+//                }
+//
+
+
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                byte[] byteArray = stream.toByteArray();
+//                mImageBitmap.recycle();
+//                //TODO make transaction
+//                Transaction tr = new Transaction(mOwner.getText().toString(), mItem.getText().toString(), mDate.getText().toString(), byteArray);
+//                Intent receivedIntent = new Intent(NewTransaction.this, MainActivity.class);
+//                receivedIntent.putExtra("newTransaction", tr);
+//                setResult(Activity.RESULT_OK, receivedIntent);
+//                finish();
+//                //TODO idk how to handle uploading transactions and refreshing the feed
             }
         });
 
@@ -103,7 +121,6 @@ public class NewTransaction extends AppCompatActivity {
                 finish();
             }
         });
-
 
 
     }
