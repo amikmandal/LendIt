@@ -14,8 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.firebase.client.Firebase;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -28,10 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private static final String TAG = "MainActivity";
     private TransactionAdapter mAdapter;
+    private Firebase mRef;
+    private Button mSendData;
     String[] mPeople;
     String[] mObjects;
     String[] mDates;
     Bitmap[] mImages;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,6 +65,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Firebase.setAndroidContext(this);
+        mRef = new Firebase("https://lendit-af1e0.firebaseio.com/");
+        mSendData = (Button) findViewById(R.id.add);
+        mSendData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                Firebase mrefChild =mRef.child("Name");
+                mrefChild.setValue("amik");
+                Firebase mdateChild =mRef.child("Date");
+                mdateChild.setValue("April 21");
+
+            }
+
+        });
 
         transactionList = new ArrayList<Transaction>();
 

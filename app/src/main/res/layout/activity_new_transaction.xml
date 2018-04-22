@@ -67,16 +67,6 @@
         android:textSize="7sp" />
 
     <TextView
-        android:id="@+id/completeTransaction"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_above="@+id/cancelTransaction"
-        android:layout_alignParentStart="true"
-        android:background="#00FF00"
-        android:gravity="center"
-        android:text="Complete Transaction" />
-
-    <TextView
         android:id="@+id/cancelTransaction"
         android:layout_width="match_parent"
         android:layout_height="52dp"
@@ -113,5 +103,15 @@
         android:gravity="center"
         android:text="Item Name:"
         android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/completeTransaction"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_above="@+id/cancelTransaction"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:background="@android:color/holo_blue_dark"
+        android:text="Complete Transaction" />
 
 </RelativeLayout>
