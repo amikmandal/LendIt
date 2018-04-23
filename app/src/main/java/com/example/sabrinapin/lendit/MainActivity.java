@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         logout = findViewById(R.id.button2);
-        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME);
+        logout.setText("Logout Here "+mUser.getUSER_FIRST()+" "+mUser.getUSER_LAST());
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
