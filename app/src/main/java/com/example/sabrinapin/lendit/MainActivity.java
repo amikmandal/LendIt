@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
         transactionList = new ArrayList<Transaction>();
 
         mPeople = new String[transactionList.size()];
