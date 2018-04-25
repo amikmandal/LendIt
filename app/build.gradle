@@ -39,8 +39,11 @@ dependencies {
     compile 'com.google.firebase:firebase-appindexing:15.0.0'
     compile 'com.google.firebase:firebase-perf:15.0.0'
     compile 'com.google.firebase:firebase-functions:15.0.0'
-    compile 'com.firebase:firebase-client-android:2.5.0'
+    //compile 'com.firebase:firebase-client-android:2.5.0'
+    compile 'com.google.firebase:firebase-database:15.0.0'
 
+//    compile 'com.google.firebase:firebase-database:15.0.0'
+//    compile 'com.google.firebase:firebase-core:15.0.0'
 
 
 

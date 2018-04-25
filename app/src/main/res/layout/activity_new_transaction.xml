@@ -7,11 +7,20 @@
     tools:context=".NewTransaction">
 
     <EditText
+        android:id="@+id/BorrowerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/editOwner"
+        android:layout_alignStart="@+id/editOwner"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <EditText
         android:id="@+id/editOwner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/editItem"
-        android:layout_alignStart="@+id/editItem"
+        android:layout_alignStart="@+id/selectDate"
         android:ems="10"
         android:inputType="textPersonName" />
 
@@ -80,16 +89,15 @@
         android:id="@+id/objectImage"
         android:layout_width="120dp"
         android:layout_height="130dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="123dp" />
+        android:layout_above="@+id/completeTransaction"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/ownerText"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
         android:layout_above="@+id/itemText"
-        android:layout_alignStart="@+id/returnDate"
+        android:layout_alignStart="@+id/itemText"
         android:gravity="center"
         android:text="Owner Name:"
         android:textSize="18sp" />
@@ -113,5 +121,15 @@
         android:gravity="center"
         android:background="@android:color/holo_blue_dark"
         android:text="Complete Transaction" />
+
+    <EditText
+        android:id="@+id/BorrowerText"
+        android:layout_width="100dp"
+        android:layout_height="46dp"
+        android:layout_above="@+id/ownerText"
+        android:layout_alignStart="@+id/ownerText"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Borrower" />
 
 </RelativeLayout>
