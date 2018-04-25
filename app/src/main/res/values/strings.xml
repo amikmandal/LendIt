@@ -38,5 +38,6 @@
         <item>Jon Bellion</item>
         <item>Chance the Rapper</item>
     </string-array>
+    <string name="title_activity_username">UsernameActivity</string>
 
 </resources>

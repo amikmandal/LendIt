@@ -75,14 +75,17 @@ public class LoginActivity extends AppCompatActivity  {
     public static String userID;
     public static String USER_FIRST_NAME;
     public static String USER_LAST_NAME;
+    public static String USERNAME;
     public static User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //setting the shared preferences under the name loginDecision - naming the table
-        sharedPref= getSharedPreferences(loginDecision, MODE_PRIVATE);
+        //NEW WAY HOW SHAREDPREFERENCES ARE STORED
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //to do : initiate muser in every case
 
         //if user was already logged in, it will go straight to main
         if(sharedPref.contains("user")) {
@@ -110,6 +113,8 @@ public class LoginActivity extends AppCompatActivity  {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
+                mUser = new User();
+
                 //puts "user" in shared pref to make sure that MainActivity will come up first until logged out
                 sharedPref.edit().putString("user", loginResult.getAccessToken().getUserId()).commit();
                 //Toast.makeText(LoginActivity.this, loginResult.getAccessToken().getUserId(), Toast.LENGTH_SHORT).show();
@@ -119,9 +124,6 @@ public class LoginActivity extends AppCompatActivity  {
 
                 //saves User ID
                 userID = loginResult.getAccessToken().getUserId();
-
-                //When login results are successful it displays the user's name
-
 
                 //Testing from stackOverflow
                 GraphRequest request = GraphRequest.newMeRequest(
@@ -134,10 +136,12 @@ public class LoginActivity extends AppCompatActivity  {
 
                                 try {
                                     USER_FIRST_NAME = object.getString("first_name");
+
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                                 sharedPref.edit().putString("firstName", USER_FIRST_NAME).commit();
+                                Log.d("firstName", USER_FIRST_NAME);
                                 //Toast.makeText(LoginActivity.this, USER_FIRST_NAME, Toast.LENGTH_SHORT).show();
 
                                 try {
@@ -146,6 +150,7 @@ public class LoginActivity extends AppCompatActivity  {
                                     e.printStackTrace();
                                 }
                                 sharedPref.edit().putString("lastName", USER_LAST_NAME).commit();
+                                Log.d("firstName", USER_LAST_NAME);
 
                                 Log.v("LoginActivity", response.getRawResponse());
                                 Log.v("AccessToken", AccessToken.getCurrentAccessToken().getToken());
@@ -154,6 +159,9 @@ public class LoginActivity extends AppCompatActivity  {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                //continues to nextActivity, which is MainActivity
+                                //NEXT ACTIVITY IS MOVED HERE BECAUSE THIS METHOD IS ASYNCHRONOUS
+                                nextActivity();
                             }
 
                         });
@@ -164,7 +172,9 @@ public class LoginActivity extends AppCompatActivity  {
                 request.executeAsync();
 
                 //made a user object
-                mUser = new User(USER_FIRST_NAME, USER_LAST_NAME, userID);
+                mUser.setUSER_ID(userID);
+                mUser.setUSER_FIRST(USER_FIRST_NAME);
+                mUser.setUSER_LAST(USER_LAST_NAME);
 
                 textView.setText(
                         "User ID: "
@@ -175,8 +185,7 @@ public class LoginActivity extends AppCompatActivity  {
                 );
 
 
-                //continues to nextActivity, which is MainActivity
-               nextActivity();
+
 
             }
 
@@ -192,6 +201,7 @@ public class LoginActivity extends AppCompatActivity  {
                 textView.setText("Failure");
             }
         });
+
     }
 
 
@@ -205,8 +215,14 @@ public class LoginActivity extends AppCompatActivity  {
 
     private void nextActivity(){
         //only called when login is Successful
+
+        //if true then skip
+        //if(else) sharedpreference yields a certain thing have it continue to username activity
+
         //takes in current info then goes to MainActivity
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        //eventually put it so that it goes onto UsernameActivity.class
+
 
         intent.putExtra("firstname", sharedPref.getString("firstName", "Swathi"));
         intent.putExtra("lastname", sharedPref.getString("lastName","Ramprasad"));

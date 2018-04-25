@@ -3,10 +3,12 @@ package com.example.sabrinapin.lendit;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -64,19 +66,25 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //TAKING SHARED PREF BACK
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
-        USER_FIRST_NAME = intent.getStringExtra("firstname");
-        USER_LAST_NAME = intent.getStringExtra("lastname");
-        userID = intent.getStringExtra("id");
+        USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
+        USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
+        userID = sharedPref.getString("user", "dumbest");
+
 
         logout = findViewById(R.id.button2);
+        //setup using preference manager
         logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME+" "+userID);
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,8 +114,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void logOut() {
         LoginManager.getInstance().logOut();
-        //changes share preference so that 'user' is no longer there
-        getSharedPreferences(LoginActivity.loginDecision, MODE_PRIVATE).edit().remove("user").commit();
+        //changeD TO MATCH SHAREDPREF TO ENSURE THAT USER/FIRST/LAST ARE ALL CLEARED
+
+        sharedPref.edit().remove("user").commit();
+        sharedPref.edit().remove("firstName").commit();
+        sharedPref.edit().remove("lastName").commit();
 
         //takes us back to LoginActivity
         startActivity(new Intent(this, LoginActivity.class));
