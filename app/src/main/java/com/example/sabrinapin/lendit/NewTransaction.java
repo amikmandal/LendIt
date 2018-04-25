@@ -39,7 +39,7 @@ public class NewTransaction extends AppCompatActivity {
     private String mCurrentPhotoPath;
     private static final String TAG = NewTransaction.class.getSimpleName();
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private Firebase mRef;
+//    private Firebase mRef;
     private static final int REQUEST_READ_PHONE_STATE = 2;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -61,8 +61,8 @@ public class NewTransaction extends AppCompatActivity {
         mReturnDate = findViewById(R.id.returnDate);
         mCancelTransaction = findViewById(R.id.cancelTransaction);
         mObjectView = findViewById(R.id.objectImage);
-        Firebase.setAndroidContext(this);
-        mRef = new Firebase("https://lendit-af1e0.firebaseio.com/");
+//        Firebase.setAndroidContext(this);
+//        mRef = new Firebase("https://lendit-af1e0.firebaseio.com/");
         mCompleteTransaction = findViewById(R.id.completeTransaction);
 
 
@@ -79,16 +79,16 @@ public class NewTransaction extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Firebase refTransaction =mRef.push();
-                refTransaction.setValue("userId here");
-                Firebase borrowerChild = refTransaction.child("borrower");
-                borrowerChild.setValue(mBorrower.getText().toString());
-                Firebase dateChild =refTransaction.child("date");
-                dateChild.setValue(mDate.getText().toString());
-                Firebase ownerChild =refTransaction.child("owner");
-                ownerChild.setValue(mOwner.getText().toString());
-                Firebase itemChild = refTransaction.child("item");
-                itemChild.setValue(mItem.getText().toString());
+//                Firebase refTransaction =mRef.push();
+//                refTransaction.setValue("userId here");
+//                Firebase borrowerChild = refTransaction.child("borrower");
+//                borrowerChild.setValue(mBorrower.getText().toString());
+//                Firebase dateChild =refTransaction.child("date");
+//                dateChild.setValue(mDate.getText().toString());
+//                Firebase ownerChild =refTransaction.child("owner");
+//                ownerChild.setValue(mOwner.getText().toString());
+//                Firebase itemChild = refTransaction.child("item");
+//                itemChild.setValue(mItem.getText().toString());
 
 
 //                int permissionCheck = ContextCompat.checkSelfPermission(thisActivity, Manifest.permission.READ_PHONE_STATE);
