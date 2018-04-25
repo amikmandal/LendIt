@@ -18,10 +18,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.firebase.client.Firebase;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Ref;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -39,7 +42,8 @@ public class NewTransaction extends AppCompatActivity {
     private String mCurrentPhotoPath;
     private static final String TAG = NewTransaction.class.getSimpleName();
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-//    private Firebase mRef;
+    //    private Firebase mRef;
+    private FirebaseDatabase mRef;
     private static final int REQUEST_READ_PHONE_STATE = 2;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -78,9 +82,24 @@ public class NewTransaction extends AppCompatActivity {
         mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
-//                Firebase refTransaction =mRef.push();
-//                refTransaction.setValue("userId here");
+                DatabaseReference myRef = mRef.getReference("users");
+                DatabaseReference nRef = myRef.child("sabthefab");
+                String key = nRef.child("userId").push().getKey();
+                nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
+                nRef.child(key).child("date").setValue(mDate.getText().toString());
+                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
+                nRef.child(key).child("item").setValue(mItem.getText().toString());
+
+                //DatabaseReference transactionKey = transactionRef.child("transactions").push();
+
+
+
+
+//                    Firebase refUser = mRef.child("ID");
+//                refUser.setValue("sabfab");
+//                Firebase refTransaction =refUser.push();
 //                Firebase borrowerChild = refTransaction.child("borrower");
 //                borrowerChild.setValue(mBorrower.getText().toString());
 //                Firebase dateChild =refTransaction.child("date");
