@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity  {
     public static String USER_FIRST_NAME;
     public static String USER_LAST_NAME;
     public static User mUser;
+    int login = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,17 @@ public class LoginActivity extends AppCompatActivity  {
 
         //setting the shared preferences under the name loginDecision - naming the table
         sharedPref= getSharedPreferences(loginDecision, MODE_PRIVATE);
+        Intent receivedIntent = getIntent();
+
+//        if(receivedIntent.getBooleanExtra("clear", false))  {
+//            SharedPreferences.Editor editMe = sharedPref.edit();
+//            editMe.remove("user");
+//            editMe.remove("firstName");
+//            editMe.remove("lastName");
+//            editMe.apply();
+//
+//        }
+
 
         //if user was already logged in, it will go straight to main
         if(sharedPref.contains("user")) {
@@ -122,6 +134,7 @@ public class LoginActivity extends AppCompatActivity  {
 
                 //When login results are successful it displays the user's name
 
+                final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
                 //Testing from stackOverflow
                 GraphRequest request = GraphRequest.newMeRequest(
@@ -134,18 +147,20 @@ public class LoginActivity extends AppCompatActivity  {
 
                                 try {
                                     USER_FIRST_NAME = object.getString("first_name");
+                                    intent.putExtra("firstname",USER_FIRST_NAME);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                sharedPref.edit().putString("firstName", USER_FIRST_NAME).commit();
+                                sharedPref.edit().putString("firstName", USER_FIRST_NAME).apply();
                                 //Toast.makeText(LoginActivity.this, USER_FIRST_NAME, Toast.LENGTH_SHORT).show();
 
                                 try {
                                     USER_LAST_NAME = object.getString("last_name");
+                                    intent.putExtra("lastname", USER_LAST_NAME);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                sharedPref.edit().putString("lastName", USER_LAST_NAME).commit();
+                                sharedPref.edit().putString("lastName", USER_LAST_NAME).apply();
 
                                 Log.v("LoginActivity", response.getRawResponse());
                                 Log.v("AccessToken", AccessToken.getCurrentAccessToken().getToken());
@@ -154,6 +169,8 @@ public class LoginActivity extends AppCompatActivity  {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+
+                                intent.putExtra("id", userID);
                             }
 
                         });
@@ -176,7 +193,8 @@ public class LoginActivity extends AppCompatActivity  {
 
 
                 //continues to nextActivity, which is MainActivity
-               nextActivity();
+
+                startActivity(intent);
 
             }
 
@@ -192,6 +210,8 @@ public class LoginActivity extends AppCompatActivity  {
                 textView.setText("Failure");
             }
         });
+
+
     }
 
 

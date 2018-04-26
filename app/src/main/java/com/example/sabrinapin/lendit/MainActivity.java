@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.Login;
 import com.facebook.login.LoginManager;
 
 import java.io.ByteArrayInputStream;
@@ -71,12 +72,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
-        USER_FIRST_NAME = intent.getStringExtra("firstname");
-        USER_LAST_NAME = intent.getStringExtra("lastname");
-        userID = intent.getStringExtra("id");
+        String fName = intent.getStringExtra("firstname");
+        Toast.makeText(this, fName, Toast.LENGTH_SHORT).show();
+        String lName = intent.getStringExtra("lastname");
+        String uID = intent.getStringExtra("id");
 
         logout = findViewById(R.id.button2);
-        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME+" "+userID);
+        logout.setText("Logout Here "+fName+" "+lName+" "+uID);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,7 +112,9 @@ public class MainActivity extends AppCompatActivity {
         getSharedPreferences(LoginActivity.loginDecision, MODE_PRIVATE).edit().remove("user").commit();
 
         //takes us back to LoginActivity
-        startActivity(new Intent(this, LoginActivity.class));
+        Intent receivedIntent = new Intent(this, LoginActivity.class);
+        receivedIntent.putExtra("clear", true);
+        startActivity(receivedIntent);
         finish();
     }
 
