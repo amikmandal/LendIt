@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //TAKING SHARED PREF BACK
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");

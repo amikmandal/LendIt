@@ -88,17 +88,17 @@ public class LoginActivity extends AppCompatActivity  {
         //to do : initiate muser in every case
 
         //if user was already logged in, it will go straight to main
-        if(sharedPref.contains("user")) {
-            Log.d("user---------", sharedPref.getString("user", null));
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("username", sharedPref.getString("user", null));
-            Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
-            intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
-            intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
-            intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
-            this.startActivity(intent);
-            finish();
-        }
+//        if(sharedPref.contains("user")) {
+//            Log.d("user---------", sharedPref.getString("user", null));
+//            Intent intent = new Intent(this, MainActivity.class);
+//            intent.putExtra("username", sharedPref.getString("user", null));
+//            Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
+//            intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
+//            intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
+//            intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
+//            this.startActivity(intent);
+//            finish();
+//        }
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -185,8 +185,6 @@ public class LoginActivity extends AppCompatActivity  {
                 );
 
 
-
-
             }
 
             @Override
@@ -220,7 +218,7 @@ public class LoginActivity extends AppCompatActivity  {
         //if(else) sharedpreference yields a certain thing have it continue to username activity
 
         //takes in current info then goes to MainActivity
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intent = new Intent(LoginActivity.this, UsernameActivity.class);
         //eventually put it so that it goes onto UsernameActivity.class
 
 

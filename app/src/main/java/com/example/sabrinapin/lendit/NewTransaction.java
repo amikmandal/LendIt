@@ -3,10 +3,12 @@ package com.example.sabrinapin.lendit;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +30,10 @@ import java.sql.Ref;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
+import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
+import static com.example.sabrinapin.lendit.LoginActivity.userID;
+
 
 public class NewTransaction extends AppCompatActivity {
 
@@ -44,6 +50,7 @@ public class NewTransaction extends AppCompatActivity {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     //    private Firebase mRef;
     private FirebaseDatabase mRef;
+    private SharedPreferences sharedPref;
     private static final int REQUEST_READ_PHONE_STATE = 2;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -65,9 +72,13 @@ public class NewTransaction extends AppCompatActivity {
         mReturnDate = findViewById(R.id.returnDate);
         mCancelTransaction = findViewById(R.id.cancelTransaction);
         mObjectView = findViewById(R.id.objectImage);
-//        Firebase.setAndroidContext(this);
-//        mRef = new Firebase("https://lendit-af1e0.firebaseio.com/");
         mCompleteTransaction = findViewById(R.id.completeTransaction);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Intent intent = getIntent();
+        USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
+        USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
+        userID = sharedPref.getString("user", "dumbest");
 
 
         final Activity thisActivity = this;
@@ -85,52 +96,38 @@ public class NewTransaction extends AppCompatActivity {
                 mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
                 DatabaseReference myRef = mRef.getReference("users");
-                DatabaseReference nRef = myRef.child("sabthefab");
-                String key = nRef.child("userId").push().getKey();
+                DatabaseReference findUsername = mRef.getReference("usernames");
+                // add the borrower username as a transaction
+                String borrowerUsername = mBorrower.getText().toString();
+                String borrowerId = findUsername.child(borrowerUsername).getKey();
+                DatabaseReference nRef = myRef.child(borrowerId);
+                String key = nRef.child(borrowerId).push().getKey();
                 nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
                 nRef.child(key).child("date").setValue(mDate.getText().toString());
                 nRef.child(key).child("owner").setValue(mOwner.getText().toString());
                 nRef.child(key).child("item").setValue(mItem.getText().toString());
 
-                //DatabaseReference transactionKey = transactionRef.child("transactions").push();
+
+
+                String ownerUsername = mOwner.getText().toString();
+                String ownerId = findUsername.child(ownerUsername).getKey();
+                DatabaseReference oRef = myRef.child(ownerId);
+                String keyO = nRef.child(borrowerId).push().getKey();
+                oRef.child(keyO).child("borrower").setValue(mBorrower.getText().toString());
+                oRef.child(keyO).child("date").setValue(mDate.getText().toString());
+                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
+                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
+
+                // add the owner username as a transaction
 
 
 
 
-//                    Firebase refUser = mRef.child("ID");
-//                refUser.setValue("sabfab");
-//                Firebase refTransaction =refUser.push();
-//                Firebase borrowerChild = refTransaction.child("borrower");
-//                borrowerChild.setValue(mBorrower.getText().toString());
-//                Firebase dateChild =refTransaction.child("date");
-//                dateChild.setValue(mDate.getText().toString());
-//                Firebase ownerChild =refTransaction.child("owner");
-//                ownerChild.setValue(mOwner.getText().toString());
-//                Firebase itemChild = refTransaction.child("item");
-//                itemChild.setValue(mItem.getText().toString());
 
 
-//                int permissionCheck = ContextCompat.checkSelfPermission(thisActivity, Manifest.permission.READ_PHONE_STATE);
-//
-//                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-////                    ActivityCompat.requestPermissions(thisActivity,
-////                            new String[]{Manifest.permission.READ_PHONE_STATE},
-//                            REQUEST_READ_PHONE_STATE);
-//                }
-//
 
 
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                byte[] byteArray = stream.toByteArray();
-//                mImageBitmap.recycle();
-//                //TODO make transaction
-//                Transaction tr = new Transaction(mOwner.getText().toString(), mItem.getText().toString(), mDate.getText().toString(), byteArray);
-//                Intent receivedIntent = new Intent(NewTransaction.this, MainActivity.class);
-//                receivedIntent.putExtra("newTransaction", tr);
-//                setResult(Activity.RESULT_OK, receivedIntent);
-//                finish();
-//                //TODO idk how to handle uploading transactions and refreshing the feed
+
             }
         });
 
