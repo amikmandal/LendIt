@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,10 +20,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +55,8 @@ public class NewTransaction extends AppCompatActivity {
     private String mCurrentPhotoPath;
     private static final String TAG = NewTransaction.class.getSimpleName();
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int CAMERA_REQUEST_CODE = 1;
+
     //    private Firebase mRef;
     private FirebaseDatabase mRef;
     private SharedPreferences sharedPref;
@@ -56,6 +65,7 @@ public class NewTransaction extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    private StorageReference storageRef;
 
 
     @Override
@@ -80,13 +90,25 @@ public class NewTransaction extends AppCompatActivity {
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
 
+        storageRef = FirebaseStorage.getInstance().getReference();
+
 
         final Activity thisActivity = this;
-        mTakePicture.setOnClickListener(new View.OnClickListener() {
+
+//        mTakePicture.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                verifyStoragePermissions(thisActivity);
+//                dispatchTakePictureIntent();
+//            }
+//        });
+
+        mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                verifyStoragePermissions(thisActivity);
-                dispatchTakePictureIntent();
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, CAMERA_REQUEST_CODE);
             }
         });
 
@@ -119,11 +141,6 @@ public class NewTransaction extends AppCompatActivity {
                 oRef.child(keyO).child("item").setValue(mItem.getText().toString());
 
                 // add the owner username as a transaction
-
-
-
-
-
 
 
 
@@ -192,15 +209,33 @@ public class NewTransaction extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            try {
-                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
-                mObjectView.setImageBitmap(mImageBitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+
+            Uri uri = data.getData();
+            StorageReference filepath = storageRef.child("Photos").child(uri.getLastPathSegment());
+
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(NewTransaction.this, "Finished", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            try {
+//                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
+//                mObjectView.setImageBitmap(mImageBitmap);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     /**
      * Checks if the app has permission to write to device storage
