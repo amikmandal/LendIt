@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
@@ -23,6 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -38,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int GET_TRANSACTION = 0;
     private ArrayList<Transaction> transactionList;
     private TextView mTextMessage;
+    private TextView trial;
     private Button logout;
     private static final String TAG = "MainActivity";
     private TransactionAdapter mAdapter;
@@ -45,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
     String[] mObjects;
     String[] mDates;
     Bitmap[] mImages;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
+    private DatabaseReference mtransRef;
+    private String userID;
+    private String mUsername;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -70,16 +83,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        trial = findViewById(R.id.write);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mFirebaseDatabase = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
         //TAKING SHARED PREF BACK
-            sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
-
+        myRef = mFirebaseDatabase.getReference().child("usernames").child(userID);
 
         logout = findViewById(R.id.button2);
         //setup using preference manager
@@ -102,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView rv = findViewById(R.id.recyclerView);
 
+
+
         mAdapter = new TransactionAdapter(this, mPeople, mObjects, mDates, mImages);
         rv.setAdapter(mAdapter);
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -109,6 +127,75 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //this is called once wwith the initial value and again when this is updated
+//            showData(dataSnapshot);
+                Log.d("firebase", dataSnapshot.toString());
+
+                UsernameInformation mInfo = dataSnapshot.getValue(UsernameInformation.class);
+                //EVERYONE PLEASE HELP ME RIGHT HERE
+                // I NEED TO SAVE THE MINFO.GETLENDITUSERNAME IN A VARIABLE ACCESSIBLE OUTSIDE OF THIS METHOD
+                Log.d("minfo", mInfo.getname());
+                Log.d("minfo", mInfo.getlenditUsername());
+
+                // put the username in Shared preferences, so that we can access it through the other activity
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+   // Log.d("fucklog", mUsername);
+
+
+
+
+
+
+        mtransRef = mFirebaseDatabase.getReference().child("users").child(userID);
+
+        mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    TransFirInfo user = snapshot.getValue(TransFirInfo.class);
+                    Log.d("borrower", user.getitem());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+
+
+
+
+
+    }
+
+    private void showData(DataSnapshot dataSnapshot) {
+//        for (DataSnapshot ds: dataSnapshot.getChildren()){
+//            Log.d("firebase", ds.child(userID).toString()  + ds.child(userID));
+//    UsernameInformation uInfo = ds.child(userID).getValue(UsernameInformation.class);
+//
+////    uInfo.setName(ds.child(userID).getValue(UsernameInformation.class).getName());
+////    uInfo.setLenditUsername(ds.child(userID).getValue(UsernameInformation.class).getLenditUsername());
+//    ArrayList <String> thisList = new ArrayList ();
+//    thisList.add(uInfo.getLenditUsername());
+//    thisList.add(uInfo.getName());
+//    mTextMessage.setText(thisList.toString());
+
+
+//        }
 
     }
 
@@ -170,3 +257,4 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+

@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import static com.example.sabrinapin.lendit.LoginActivity.USERNAME;
+import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.loginDecision;
 import static com.example.sabrinapin.lendit.LoginActivity.mUser;
@@ -54,12 +55,21 @@ public class UsernameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String userId = mUser.getUSER_ID();
                 if(true){ Intent intent = new Intent(UsernameActivity.this, MainActivity.class);}
-                DatabaseReference myRef = mReference.getReference("users");
+//                DatabaseReference myRef = mReference.getReference("users");
                 DatabaseReference myUsernames = mReference.getReference("usernames");
                 USERNAME = usernameView.getText().toString();
                 mUser.setUSERNAME(USERNAME);
                 sharedPref.edit().putString("userName",USERNAME).commit();
-                myUsernames.child(userId).setValue(USERNAME);
+                USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
+                USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
+                UsernameInformation infoA = new UsernameInformation();
+                infoA.setlenditUsername(USERNAME);
+                infoA.setname(USER_FIRST_NAME + " " + USER_LAST_NAME);
+
+                myUsernames.child(userId).setValue(infoA);
+
+//                myUsernames.child(userId).child("lenditUsername").setValue(USERNAME);
+//                myUsernames.child(userId).child("Name").setValue(USER_FIRST_NAME + " " + USER_LAST_NAME);
                 //myRef.child(userId).child("username").setValue(USERNAME);
 
                 Intent intent = new Intent(UsernameActivity.this, MainActivity.class);

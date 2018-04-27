@@ -96,27 +96,46 @@ public class NewTransaction extends AppCompatActivity {
                 mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
                 DatabaseReference myRef = mRef.getReference("users");
-                DatabaseReference findUsername = mRef.getReference("usernames");
-                // add the borrower username as a transaction
-                String borrowerUsername = mBorrower.getText().toString();
-                String borrowerId = findUsername.child(borrowerUsername).getKey();
-                DatabaseReference nRef = myRef.child(borrowerId);
-                String key = nRef.child(borrowerId).push().getKey();
-                nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
-                nRef.child(key).child("date").setValue(mDate.getText().toString());
-                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
-                nRef.child(key).child("item").setValue(mItem.getText().toString());
+                TransFirInfo tInfo = new TransFirInfo();
+                tInfo.setborrower(mBorrower.getText().toString());
+                tInfo.setdate(mDate.getText().toString());
+                tInfo.setitem(mItem.getText().toString());
+                tInfo.setowner(mOwner.getText().toString());
+                String borrowerUN = mBorrower.getText().toString();
+                String ownerUN = mOwner.getText().toString();
+
+
+              myRef.child(ownerUN).push().setValue(tInfo);
+                myRef.child(borrowerUN).push().setValue(tInfo);
 
 
 
-                String ownerUsername = mOwner.getText().toString();
-                String ownerId = findUsername.child(ownerUsername).getKey();
-                DatabaseReference oRef = myRef.child(ownerId);
-                String keyO = nRef.child(borrowerId).push().getKey();
-                oRef.child(keyO).child("borrower").setValue(mBorrower.getText().toString());
-                oRef.child(keyO).child("date").setValue(mDate.getText().toString());
-                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
-                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
+
+
+//                DatabaseReference findUsername = mRef.getReference("usernames");
+//                // add the borrower username as a transaction
+//                String borrowerUsername = mBorrower.getText().toString();
+//                String borrowerId = findUsername.child(borrowerUsername).getKey();
+//                DatabaseReference nRef = myRef.child(borrowerId);
+//                String key = nRef.child(borrowerId).push().getKey();
+//                nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
+//                nRef.child(key).child("date").setValue(mDate.getText().toString());
+//                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
+//                nRef.child(key).child("item").setValue(mItem.getText().toString());
+//
+//
+//
+//                String ownerUsername = mOwner.getText().toString();
+//                String ownerId = findUsername.child(ownerUsername).getKey();
+//                DatabaseReference oRef = myRef.child(ownerId);
+//                //String keyO = nRef.child(borrowerId).push().getKey();
+//                String keyO = oRef.child(borrowerId).push().getKey();
+//                oRef.child(keyO).child("borrower").setValue(mBorrower.getText().toString());
+//                oRef.child(keyO).child("date").setValue(mDate.getText().toString());
+//                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
+//                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
+
+
 
                 // add the owner username as a transaction
 
