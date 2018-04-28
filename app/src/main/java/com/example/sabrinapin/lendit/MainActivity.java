@@ -52,11 +52,14 @@ public class MainActivity extends AppCompatActivity {
     String[] mObjects;
     String[] mDates;
     Bitmap[] mImages;
+
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private DatabaseReference mtransRef;
     private String userID;
     private String mUsername;
+    private ArrayList <String> gotUsername = new ArrayList<String>();
+
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -95,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
+
+
         myRef = mFirebaseDatabase.getReference().child("usernames").child(userID);
 
         logout = findViewById(R.id.button2);
@@ -128,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -136,12 +142,33 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("firebase", dataSnapshot.toString());
 
                 UsernameInformation mInfo = dataSnapshot.getValue(UsernameInformation.class);
-                //EVERYONE PLEASE HELP ME RIGHT HERE
-                // I NEED TO SAVE THE MINFO.GETLENDITUSERNAME IN A VARIABLE ACCESSIBLE OUTSIDE OF THIS METHOD
                 Log.d("minfo", mInfo.getname());
-                Log.d("minfo", mInfo.getlenditUsername());
+
+                Log.d("username", mInfo.getlenditUsername());
+                String myUsername = mInfo.getlenditUsername();
+                //Log.d("instance", mUsername);
+
 
                 // put the username in Shared preferences, so that we can access it through the other activity
+                mtransRef = mFirebaseDatabase.getReference().child("users").child(myUsername);
+
+                mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            TransFirInfo user = snapshot.getValue(TransFirInfo.class);
+                            Log.d("borrower", user.getitem());
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+
+
+
+
 
             }
 
@@ -152,27 +179,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-   // Log.d("fucklog", mUsername);
 
 
 
 
 
 
-        mtransRef = mFirebaseDatabase.getReference().child("users").child(userID);
 
-        mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    TransFirInfo user = snapshot.getValue(TransFirInfo.class);
-                    Log.d("borrower", user.getitem());
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
 
 
 

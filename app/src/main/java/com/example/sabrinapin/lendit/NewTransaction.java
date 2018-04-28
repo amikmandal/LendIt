@@ -93,6 +93,8 @@ public class NewTransaction extends AppCompatActivity {
         mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
                 DatabaseReference myRef = mRef.getReference("users");
@@ -105,7 +107,7 @@ public class NewTransaction extends AppCompatActivity {
                 String ownerUN = mOwner.getText().toString();
 
 
-              myRef.child(ownerUN).push().setValue(tInfo);
+                myRef.child(ownerUN).push().setValue(tInfo);
                 myRef.child(borrowerUN).push().setValue(tInfo);
 
 

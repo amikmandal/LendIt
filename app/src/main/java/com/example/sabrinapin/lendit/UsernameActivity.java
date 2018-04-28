@@ -37,6 +37,7 @@ public class UsernameActivity extends AppCompatActivity {
 
         welcomeView = findViewById(R.id.welcomeMessage);
         usernameView = findViewById(R.id.usernameInput);
+
         mReference = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -56,7 +57,9 @@ public class UsernameActivity extends AppCompatActivity {
                 String userId = mUser.getUSER_ID();
                 if(true){ Intent intent = new Intent(UsernameActivity.this, MainActivity.class);}
 //                DatabaseReference myRef = mReference.getReference("users");
+
                 DatabaseReference myUsernames = mReference.getReference("usernames");
+
                 USERNAME = usernameView.getText().toString();
                 mUser.setUSERNAME(USERNAME);
                 sharedPref.edit().putString("userName",USERNAME).commit();
