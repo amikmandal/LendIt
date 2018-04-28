@@ -42,4 +42,8 @@ public class TransFirInfo {
     public void setowner(String owner) {
         this.owner = owner;
     }
+
+    public String toString(){
+        return borrower + " " + date + " " + item + " " +  owner;
+    }
 }

@@ -155,10 +155,18 @@ public class MainActivity extends AppCompatActivity {
                 mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+
+                       int length = (int) dataSnapshot.getChildrenCount();
+                       int i =0;
+                       TransFirInfo [] myArr = new TransFirInfo[length];
+
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             TransFirInfo user = snapshot.getValue(TransFirInfo.class);
+                            myArr[i] = user;
+                            i++;
                             Log.d("borrower", user.getitem());
                         }
+                        Log.d("arrayCheck", myArr[0].toString());
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
