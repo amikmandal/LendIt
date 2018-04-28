@@ -116,6 +116,7 @@ public class NewTransaction extends AppCompatActivity {
                         if ((snapshot.hasChild(mBorrower.getText().toString()))&&(snapshot.hasChild(mOwner.getText().toString()))) {
                             FirebaseDatabase rRefs = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
                             DatabaseReference tRef = rRefs.getReference("checkNames");
+                                DatabaseReference pushRef = rRefs.getReference("users");
 
                             TransFirInfo tInfo = new TransFirInfo();
                             tInfo.setborrower(mBorrower.getText().toString());
@@ -127,8 +128,8 @@ public class NewTransaction extends AppCompatActivity {
                             String ownerUN = mOwner.getText().toString();
 
 
-                            tRef.child(ownerUN).push().setValue(tInfo);
-                            tRef.child(borrowerUN).push().setValue(tInfo);
+                            pushRef.child(ownerUN).push().setValue(tInfo);
+                            pushRef.child(borrowerUN).push().setValue(tInfo);
 
 
                             Intent intent = new Intent(NewTransaction.this, MainActivity.class);

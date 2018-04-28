@@ -152,9 +152,13 @@ public class MainActivity extends AppCompatActivity {
                 // put the username in Shared preferences, so that we can access it through the other activity
                 mtransRef = mFirebaseDatabase.getReference().child("users").child(myUsername);
 
+                // catch an exception if the user doesn't exist in the database: leave the array as an empty one if the data does not exist
+
+
                 mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+
 
                        int length = (int) dataSnapshot.getChildrenCount();
                        int i =0;
@@ -166,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                             i++;
                             Log.d("borrower", user.getitem());
                         }
-                        Log.d("arrayCheck", myArr[0].toString());
+                        //q`123Log.d("arrayCheck", myArr[0].toString());
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
