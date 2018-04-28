@@ -19,10 +19,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,22 +102,63 @@ public class NewTransaction extends AppCompatActivity {
                 mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
                 DatabaseReference myRef = mRef.getReference("users");
-                TransFirInfo tInfo = new TransFirInfo();
-                tInfo.setborrower(mBorrower.getText().toString());
-                tInfo.setdate(mDate.getText().toString());
-                tInfo.setitem(mItem.getText().toString());
-                tInfo.setowner(mOwner.getText().toString());
-                String borrowerUN = mBorrower.getText().toString();
-                String ownerUN = mOwner.getText().toString();
 
 
-                myRef.child(ownerUN).push().setValue(tInfo);
-                myRef.child(borrowerUN).push().setValue(tInfo);
+
+                //check if the borrower exists
 
 
-                Intent intent = new Intent(NewTransaction.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                DatabaseReference myUsernames = mRef.getReference("checkNames");
+
+                myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if ((snapshot.hasChild(mBorrower.getText().toString()))&&(snapshot.hasChild(mOwner.getText().toString()))) {
+                            FirebaseDatabase rRefs = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+                            DatabaseReference tRef = rRefs.getReference("checkNames");
+
+                            TransFirInfo tInfo = new TransFirInfo();
+                            tInfo.setborrower(mBorrower.getText().toString());
+                            tInfo.setdate(mDate.getText().toString());
+                            tInfo.setitem(mItem.getText().toString());
+                            tInfo.setowner(mOwner.getText().toString());
+
+                            String borrowerUN = mBorrower.getText().toString();
+                            String ownerUN = mOwner.getText().toString();
+
+
+                            tRef.child(ownerUN).push().setValue(tInfo);
+                            tRef.child(borrowerUN).push().setValue(tInfo);
+
+
+                            Intent intent = new Intent(NewTransaction.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else{
+                            if ((!snapshot.hasChild(mBorrower.getText().toString()))&&(!snapshot.hasChild(mOwner.getText().toString()))){
+                                Toast.makeText(NewTransaction.this, "Both the user and borrower are not registered", Toast.LENGTH_LONG).show();
+                            }
+
+                            else if(!(snapshot.hasChild(mBorrower.getText().toString()))) {
+                                Toast.makeText(NewTransaction.this, "This borrower is not registered", Toast.LENGTH_LONG).show();
+                            }
+
+                            else if(!(snapshot.hasChild(mOwner.getText().toString()))) {
+                                Toast.makeText(NewTransaction.this, "This owner is not registered", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
 
 
 
