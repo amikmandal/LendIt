@@ -111,6 +111,12 @@ public class NewTransaction extends AppCompatActivity {
                 myRef.child(borrowerUN).push().setValue(tInfo);
 
 
+                Intent intent = new Intent(NewTransaction.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+
+
+
 
 
 

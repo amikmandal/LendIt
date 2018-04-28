@@ -53,6 +53,11 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.Login;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import org.json.JSONException;
@@ -77,15 +82,22 @@ public class LoginActivity extends AppCompatActivity  {
     public static String USER_LAST_NAME;
     public static String USERNAME;
     public static User mUser;
+    private FirebaseDatabase mRoot;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mRoot = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+        userRef = mRoot.getReference().child("users");
 
         //NEW WAY HOW SHAREDPREFERENCES ARE STORED
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         //to do : initiate muser in every case
+
+
+
 
         //if user was already logged in, it will go straight to main
 //        if(sharedPref.contains("user")) {
@@ -161,7 +173,32 @@ public class LoginActivity extends AppCompatActivity  {
                                 }
                                 //continues to nextActivity, which is MainActivity
                                 //NEXT ACTIVITY IS MOVED HERE BECAUSE THIS METHOD IS ASYNCHRONOUS
-                                nextActivity();
+                                DatabaseReference myUsernames = mRoot.getReference("usernames");
+
+                                myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        if (snapshot.hasChild(userID)) {
+                                            Intent curintent = new Intent(LoginActivity.this, MainActivity.class);
+                                            startActivity(curintent);
+                                            finish();
+
+                                        }
+                                        else{
+                                            nextActivity();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+
+
+
                             }
 
                         });
