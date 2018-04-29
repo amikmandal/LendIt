@@ -142,6 +142,9 @@ public class NewTransaction extends AppCompatActivity {
                 myRef.child(ownerUN).push().setValue(tInfo);
                 myRef.child(borrowerUN).push().setValue(tInfo);
 
+                Log.d("wonka", mImageUri.toString());
+
+
                 if (mImageUri != null) {
 
                     StorageReference filepath = storageRef.child(mImageUri.getLastPathSegment());
