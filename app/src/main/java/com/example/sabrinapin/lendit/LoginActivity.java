@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -72,9 +73,6 @@ public class LoginActivity extends AppCompatActivity  {
     TextView textView;
     CallbackManager callbackManager;
     SharedPreferences sharedPref;
-    //user's name
-
-    //userID
 
     public static String loginDecision = "loginInfo";
     public static String userID;
@@ -91,26 +89,45 @@ public class LoginActivity extends AppCompatActivity  {
         mRoot = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
         userRef = mRoot.getReference().child("users");
 
+        //for rotation
+        //determine rotation
+       // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
         //NEW WAY HOW SHAREDPREFERENCES ARE STORED
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //to do : initiate muser in every case
+        //removed inTransaction
+        //sharedPref.edit().remove("inTransaction").commit();
 
 
+        // try making a sharedPref that changes when you go to transaction adapter - and is removed when you complete transaction
+        if(sharedPref.contains("inTransaction") && sharedPref.contains("user")){
+            Toast.makeText(this, "This went to LoginActivity, but it contains user and inTransaction. Should go to NewTransaction", Toast.LENGTH_LONG).show();
+            //make it continue on to NewTransaction
+            //BUT MAKE SURE THE SHIT YOU TYPED IN STAYS THERE
+            Intent intent = new Intent(this, NewTransaction.class);
+            this.startActivity(intent);
+            finish();
+        }
 
+        //testing to determine if it it should be inTransaction
+        if(!sharedPref.contains("inTransaction")){
+            Toast.makeText(this, "Does NOT contain inTransaction", Toast.LENGTH_SHORT).show();
+        }
 
         //if user was already logged in, it will go straight to main
-//        if(sharedPref.contains("user")) {
-//            Log.d("user---------", sharedPref.getString("user", null));
-//            Intent intent = new Intent(this, MainActivity.class);
-//            intent.putExtra("username", sharedPref.getString("user", null));
-//            Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
-//            intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
-//            intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
-//            intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
-//            this.startActivity(intent);
-//            finish();
-//        }
+        if(sharedPref.contains("user")) {
+            Log.d("user---------", sharedPref.getString("user", null));
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("username", sharedPref.getString("user", null));
+            Toast.makeText(this, "User was already logged in", Toast.LENGTH_SHORT).show();
+            intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
+            intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
+            intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
+            this.startActivity(intent);
+            finish();
+        }
+        //fix here
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -120,6 +137,7 @@ public class LoginActivity extends AppCompatActivity  {
 
         textView = (TextView)findViewById(R.id.textView);
 
+        //Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -195,10 +213,6 @@ public class LoginActivity extends AppCompatActivity  {
                                     }
                                 });
 
-
-
-
-
                             }
 
                         });
@@ -245,7 +259,6 @@ public class LoginActivity extends AppCompatActivity  {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
 
 
     private void nextActivity(){

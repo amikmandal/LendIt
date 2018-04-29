@@ -67,6 +67,7 @@ public class NewTransaction extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_transaction);
 
+
         mOwner = findViewById(R.id.editOwner);
         mItem = findViewById(R.id.editItem);
         mBorrower = findViewById(R.id.BorrowerName);
@@ -83,6 +84,15 @@ public class NewTransaction extends AppCompatActivity {
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
+
+        //when you exit out of app while in a transaciton, when you return it'll be back in transaction
+        //make sure you remove "inTransaction" when you cancel/complete transaction
+        sharedPref.edit().putString("inTransaction", "uselessString").commit();
+
+        //Toast to test if set up correctly
+        if(sharedPref.contains("inTransaction")){
+            Toast.makeText(this, "inTransaction is now in sharedPref", Toast.LENGTH_LONG).show();
+        }
 
 
         final Activity thisActivity = this;
@@ -103,7 +113,8 @@ public class NewTransaction extends AppCompatActivity {
 
                 DatabaseReference myRef = mRef.getReference("users");
 
-
+                //removes "inTransaction" from shared preferences, this is so that when you exit out of app you'll still b in transaction
+               sharedPref.edit().remove("inTransaction").commit();
 
                 //check if the borrower exists
 
@@ -134,6 +145,7 @@ public class NewTransaction extends AppCompatActivity {
 
                             Intent intent = new Intent(NewTransaction.this, MainActivity.class);
                             startActivity(intent);
+                            sharedPref.edit().remove("inTransaction").commit();
                             finish();
                         }
                         else{
@@ -154,6 +166,9 @@ public class NewTransaction extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
+                        //when it is cancelled "in Transaction" is removes
+                        sharedPref.edit().remove("inTransaction").commit();
+                        finish();
 
                     }
                 });
@@ -204,9 +219,11 @@ public class NewTransaction extends AppCompatActivity {
             }
         });
 
+        //FIX WITH SHARED PREF END isTransaction
         mCancelTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sharedPref.edit().remove("inTransaction").commit();
                 finish();
             }
         });
@@ -295,5 +312,16 @@ public class NewTransaction extends AppCompatActivity {
             );
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        //when back is pressed
+        Toast.makeText(this, "you should be going back to main", Toast.LENGTH_LONG).show();
+        sharedPref.edit().remove("inTransaction").commit();
+        Intent intent = new Intent(NewTransaction.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 
 }

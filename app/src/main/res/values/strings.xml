@@ -39,5 +39,7 @@
         <item>Chance the Rapper</item>
     </string-array>
     <string name="title_activity_username">UsernameActivity</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_camera">CameraActivity</string>
 
 </resources>

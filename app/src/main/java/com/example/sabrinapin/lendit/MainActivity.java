@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -91,9 +92,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
         mFirebaseDatabase = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
         //TAKING SHARED PREF BACK
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
         Intent intent = getIntent();
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
@@ -113,7 +117,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
+       if(sharedPref.contains("inTransaction")){
+         intent = new Intent(this, NewTransaction.class);
+         this.startActivity(intent);
+         Toast.makeText(this, "inTransaction is in sharedPref: FIX THIS", Toast.LENGTH_LONG).show();
+         finish();
+          }
+
+        if(!sharedPref.contains("inTransaction")){
+            Toast.makeText(this, "inTransaction is NOT in sharedPref", Toast.LENGTH_LONG).show();
+        }
+
         transactionList = new ArrayList<Transaction>();
 
         mPeople = new String[transactionList.size()];
@@ -194,17 +208,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     }
 
     private void showData(DataSnapshot dataSnapshot) {
@@ -231,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPref.edit().remove("user").commit();
         sharedPref.edit().remove("firstName").commit();
         sharedPref.edit().remove("lastName").commit();
+        sharedPref.edit().remove("inTransaction").commit();
 
         //takes us back to LoginActivity
         startActivity(new Intent(this, LoginActivity.class));
