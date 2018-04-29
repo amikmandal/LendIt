@@ -30,20 +30,38 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'com.google.firebase:firebase-crash:15.0.0'
-    compile 'com.google.firebase:firebase-auth:15.0.0'
-    compile 'com.google.firebase:firebase-messaging:15.0.0'
-    compile 'com.google.firebase:firebase-config:15.0.0'
-    compile 'com.google.firebase:firebase-invites:15.0.0'
-    compile 'com.google.firebase:firebase-ads:15.0.0'
-    compile 'com.google.firebase:firebase-appindexing:15.0.0'
-    compile 'com.google.firebase:firebase-perf:15.0.0'
-    compile 'com.google.firebase:firebase-functions:15.0.0'
+    implementation 'com.google.firebase:firebase-crash:15.0.0'
+    implementation 'com.google.firebase:firebase-auth:15.0.0'
+    implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.google.firebase:firebase-config:15.0.0'
+    implementation 'com.google.firebase:firebase-invites:15.0.0'
+    implementation 'com.google.firebase:firebase-ads:15.0.0'
+    implementation 'com.google.firebase:firebase-appindexing:15.0.0'
+    implementation 'com.google.firebase:firebase-perf:15.0.0'
+    implementation 'com.google.firebase:firebase-functions:15.0.0'
     //compile 'com.firebase:firebase-client-android:2.5.0'
-    compile 'com.google.firebase:firebase-database:15.0.0'
+    implementation 'com.google.firebase:firebase-database:15.0.0'
+    implementation 'com.google.firebase:firebase-storage:15.0.0'
+    implementation 'com.google.firebase:firebase-auth:15.0.0'
 
 //    compile 'com.google.firebase:firebase-database:15.0.0'
 //    compile 'com.google.firebase:firebase-core:15.0.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.0.0'
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.android.gms:play-services-auth:15.0.0'
+    implementation 'pub.devrel:easypermissions:0.3.0'
+    implementation('com.google.api-client:google-api-client-android:1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation('com.google.apis:google-api-services-calendar:v3-rev312-1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    //local calendar
+    implementation 'com.roomorama:caldroid:3.0.1'
+    //    compile 'com.google.firebase:firebase-database:15.0.0'
+    //    compile 'com.google.firebase:firebase-core:15.0.0'
 
 }
 

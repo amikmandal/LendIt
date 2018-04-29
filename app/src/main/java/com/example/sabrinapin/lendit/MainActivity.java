@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -24,11 +25,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -44,14 +49,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int GET_TRANSACTION = 0;
     private ArrayList<Transaction> transactionList;
     private TextView mTextMessage;
-    private TextView trial;
+    //private TextView trial;
     private Button logout;
     private static final String TAG = "MainActivity";
     private TransactionAdapter mAdapter;
+
     String[] mPeople;
     String[] mObjects;
     String[] mDates;
-    Bitmap[] mImages;
+    Uri[] mUris;
+
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
@@ -61,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList <String> gotUsername = new ArrayList<String>();
 
 
+    private DatabaseReference DBR;
+    private FirebaseDatabase FDB;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,20 +86,24 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_notifications:
 //                    mTextMessage.setText(R.string.title_notifications);
+                    Intent thatIntent = new Intent(MainActivity.this, CaldroidSampleActivity.class);
+                    startActivity(thatIntent);
                     return true;
             }
             return false;
         }
     };
     private SharedPreferences sharedPref;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        trial = findViewById(R.id.write);
+        //trial = findViewById(R.id.write);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRecyclerView = findViewById(R.id.mRecyclerView);
         mFirebaseDatabase = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
         //TAKING SHARED PREF BACK
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -99,41 +112,48 @@ public class MainActivity extends AppCompatActivity {
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
 
+        FDB = FirebaseDatabase.getInstance();
 
         myRef = mFirebaseDatabase.getReference().child("usernames").child(userID);
 
-        logout = findViewById(R.id.button2);
-        //setup using preference manager
-        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME+" "+userID);
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logOut();
-            }
-        });
+//        logout = findViewById(R.id.button2);
+//        //setup using preference manager
+//        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME+" "+userID);
+//
+//        logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                logOut();
+//            }
+//        });
 
         //Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
-        transactionList = new ArrayList<Transaction>();
-
-        mPeople = new String[transactionList.size()];
-        mObjects = new String[transactionList.size()];
-        mDates = new String[transactionList.size()];
-        mImages = new Bitmap[transactionList.size()];
-
-        RecyclerView rv = findViewById(R.id.recyclerView);
 
 
 
-        mAdapter = new TransactionAdapter(this, mPeople, mObjects, mDates, mImages);
-        rv.setAdapter(mAdapter);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+
+
+//        mPeople = new String[transactionList.size()];
+//        mObjects = new String[transactionList.size()];
+//        mDates = new String[transactionList.size()];
+//        mUris = new Uri[transactionList.size()];
+
+
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-
+        ArrayList<TransFirInfo> trialList = new ArrayList<TransFirInfo>();
+        TransFirInfo first = new TransFirInfo();
+        first.setowner("werido");
+        first.setdate("3/3/3");
+        first.setborrower("people");
+        first.setitem("shit");
+        first.setImageUrl("https://firebasestorage.googleapis.com/v0/b/lendit-af1e0.appspot.com/o/JPEG_20180429_074637_1948933449012095423.jpg?alt=media&token=720d7752-e0f3-4c5e-84b1-7e18354580cb");
+        trialList.add(first);
+        mAdapter = new TransactionAdapter(this, trialList);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -152,13 +172,29 @@ public class MainActivity extends AppCompatActivity {
                 // put the username in Shared preferences, so that we can access it through the other activity
                 mtransRef = mFirebaseDatabase.getReference().child("users").child(myUsername);
 
+                // catch an exception if the user doesn't exist in the database: leave the array as an empty one if the data does not exist
+
+
                 mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                       int length = (int) dataSnapshot.getChildrenCount();
+
+                        ArrayList<TransFirInfo> myArr = new ArrayList<TransFirInfo>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             TransFirInfo user = snapshot.getValue(TransFirInfo.class);
+                            myArr.add(0, user);
                             Log.d("borrower", user.getitem());
+
+
                         }
+                        mAdapter = new TransactionAdapter(getApplicationContext(), myArr);
+                        mRecyclerView.setAdapter(mAdapter);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(new TransactionAdapter(getApplicationContext(), myArr));
+                        //Log.d("arrayCheck", myArr.get(0).toString());
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -186,16 +222,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
     }
 
-    private void showData(DataSnapshot dataSnapshot) {
+
+//    private void showData(DataSnapshot dataSnapshot) {
 //        for (DataSnapshot ds: dataSnapshot.getChildren()){
 //            Log.d("firebase", ds.child(userID).toString()  + ds.child(userID));
 //    UsernameInformation uInfo = ds.child(userID).getValue(UsernameInformation.class);
@@ -210,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        }
 
-    }
+//    }
 
     private void logOut() {
         LoginManager.getInstance().logOut();
@@ -238,35 +268,71 @@ public class MainActivity extends AppCompatActivity {
                 Transaction tr = (Transaction) data.getParcelableExtra("newTransaction");
                 System.out.println(tr);
                 transactionList.add(tr);
-                initList();
                 mAdapter.notifyDataSetChanged();
             }
         }
     }
 
 
-    public void initList()  {
+//    public void initList(ArrayList<TransFirInfo> transactionList)  {
+//
+//
+//        mPeople = new String[transactionList.length];
+//        mObjects = new String[transactionList.length];
+//        mDates = new String[transactionList.length];
+//        mUris = new Uri[transactionList.length];
+//
+//        if(transactionList.length > 0) {
+//            System.out.println("Did we make it");
+//            for (int i = 0; i < transactionList.length; i++) {
+//                mPeople[i] = transactionList[i].getowner();
+//                mObjects[i] = transactionList[i].getitem();
+//                mDates[i] = transactionList[i].getdate();
+//                mUris[i] = Uri.parse(transactionList[i].getImageUrl());
+//
+//            }
+//        }
+//
+//        mAdapter.notifyDataSetChanged();
+//
+//    }
 
-
-        mPeople = new String[transactionList.size()];
-        mObjects = new String[transactionList.size()];
-        mDates = new String[transactionList.size()];
-        mImages = new Bitmap[transactionList.size()];
-
-        if(transactionList.size() > 0) {
-            System.out.println("Did we make it");
-            for (int i = 0; i < transactionList.size(); i++) {
-                mPeople[i] = transactionList.get(i).getOwner();
-                mObjects[i] = transactionList.get(i).getItem();
-                mDates[i] = transactionList.get(i).getDate();
-                ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(transactionList.get(i).getImage());
-                mImages[i] = BitmapFactory.decodeStream(arrayInputStream);
-            }
-        }
-
-    }
-
-
+//    void getDateFireBase(){
+//
+//        DBR = FDB.getReference("https://lendit-af1e0.firebaseio.com/").child("users");
+//
+//        DBR.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//
+//                TransFirInfo myObject = dataSnapshot.getValue(TransFirInfo.class);
+//                myArr.add(myObject);
+//                mRecyclerView.setAdapter(new TransactionAdapter(getApplicationContext(), myArr));
+//
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//    }
 
 
 }

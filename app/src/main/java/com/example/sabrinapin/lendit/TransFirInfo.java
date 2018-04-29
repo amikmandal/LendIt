@@ -9,7 +9,15 @@ public class TransFirInfo {
     private String date;
     private String item;
     private String owner;
+    private String imageUrl;
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getborrower() {
         return borrower;
@@ -41,5 +49,9 @@ public class TransFirInfo {
 
     public void setowner(String owner) {
         this.owner = owner;
+    }
+
+    public String toString(){
+        return borrower + " " + date + " " + item + " " +  owner + " " + imageUrl;
     }
 }
