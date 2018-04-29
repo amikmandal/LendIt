@@ -132,4 +132,9 @@
         android:inputType="textPersonName"
         android:text="Borrower" />
 
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="175dp"
+        android:layout_below="@+id/BorrowerText"/>
+
 </RelativeLayout>

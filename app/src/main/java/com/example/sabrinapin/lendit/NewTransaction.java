@@ -20,15 +20,29 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.net.Uri;
+
+import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.Ref;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
@@ -41,13 +55,19 @@ public class NewTransaction extends AppCompatActivity {
     EditText mOwner, mItem, mDate, mBorrower;
     Button mTakePicture, mUploadPicture, mAddToCalendar;
     TextView mReturnDate, mCompleteTransaction, mCancelTransaction;
-    ImageView mObjectView;
+    ImageView mObjectImage;
+
     private String mPhotoDirectory;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int CAMERA_REQUEST_CODE = 1;
+
+    private Uri mImageUri = null;
+    File photoFile = null;
+
     private Bitmap mImageBitmap;
     private String mCurrentPhotoPath;
     private static final String TAG = NewTransaction.class.getSimpleName();
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
+
     //    private Firebase mRef;
     private FirebaseDatabase mRef;
     private SharedPreferences sharedPref;
@@ -56,6 +76,8 @@ public class NewTransaction extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private StorageReference storageRef;
 
 
     @Override
@@ -71,7 +93,9 @@ public class NewTransaction extends AppCompatActivity {
         mAddToCalendar = findViewById(R.id.addToCalendar);
         mReturnDate = findViewById(R.id.returnDate);
         mCancelTransaction = findViewById(R.id.cancelTransaction);
-        mObjectView = findViewById(R.id.objectImage);
+
+        mObjectImage = findViewById(R.id.objectImage);
+
         mCompleteTransaction = findViewById(R.id.completeTransaction);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -80,13 +104,22 @@ public class NewTransaction extends AppCompatActivity {
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
 
+        storageRef = FirebaseStorage.getInstance().getReference();
 
         final Activity thisActivity = this;
+
         mTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 verifyStoragePermissions(thisActivity);
                 dispatchTakePictureIntent();
+
+//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (intent.resolveActivity(getPackageManager()) != null) {
+//                    startActivityForResult(intent, CAMERA_REQUEST_CODE);
+//                }
+
             }
         });
 
@@ -94,10 +127,10 @@ public class NewTransaction extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
                 mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
-                DatabaseReference myRef = mRef.getReference("users");
+                final DatabaseReference myRef = mRef.getReference("users");
+
                 TransFirInfo tInfo = new TransFirInfo();
                 tInfo.setborrower(mBorrower.getText().toString());
                 tInfo.setdate(mDate.getText().toString());
@@ -106,13 +139,51 @@ public class NewTransaction extends AppCompatActivity {
                 String borrowerUN = mBorrower.getText().toString();
                 String ownerUN = mOwner.getText().toString();
 
-
                 myRef.child(ownerUN).push().setValue(tInfo);
                 myRef.child(borrowerUN).push().setValue(tInfo);
 
+                if (mImageUri != null) {
 
+                    StorageReference filepath = storageRef.child(mImageUri.getLastPathSegment());
+                    Log.d("firepath", filepath.toString());
 
+                    //Toast.makeText(thisActivity, "hey its working", Toast.LENGTH_SHORT).show();
 
+                    UploadTask uploadTask = filepath.putFile(mImageUri);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(thisActivity, "dafuq", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    startActivity(new Intent(NewTransaction.this, MainActivity.class));
+
+//                                   myRef.child("image").setValue(downloadUrl.toString());
+
+//                    filepath.putFile(mImageUri)
+//                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                @Override
+//                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                    // Get a URL to the uploaded content
+//                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+//                                    myRef.child("image").setValue(downloadUrl.toString());
+//                                }
+//                            }
+//                            );
+
+//                    filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+//                            myRef.child("image").setValue(downloadUrl.toString());
+//
+//                            startActivity(new Intent(NewTransaction.this, MainActivity.class));
+//                        }
+//                    });
+
+                }
 
 //                DatabaseReference findUsername = mRef.getReference("usernames");
 //                // add the borrower username as a transaction
@@ -125,8 +196,6 @@ public class NewTransaction extends AppCompatActivity {
 //                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
 //                nRef.child(key).child("item").setValue(mItem.getText().toString());
 //
-//
-//
 //                String ownerUsername = mOwner.getText().toString();
 //                String ownerId = findUsername.child(ownerUsername).getKey();
 //                DatabaseReference oRef = myRef.child(ownerId);
@@ -137,17 +206,7 @@ public class NewTransaction extends AppCompatActivity {
 //                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
 //                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
 
-
-
                 // add the owner username as a transaction
-
-
-
-
-
-
-
-
 
             }
         });
@@ -159,21 +218,18 @@ public class NewTransaction extends AppCompatActivity {
             }
         });
 
-
     }
-
-
-
+//
     private void dispatchTakePictureIntent() {
-        System.out.println("HEY");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             System.out.println("YOU");
             // Create the File where the photo should go
-            File photoFile = null;
             try {
                 photoFile = createImageFile();
+                Log.d("filepath", photoFile.toString());
             } catch (IOException ex) {
+
                 // Error occurred while creating the File
                 Log.i(TAG, "IOException");
                 ex.printStackTrace();
@@ -181,9 +237,10 @@ public class NewTransaction extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 System.out.println("YOU");
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, MyFileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".my.package.name.provider",photoFile));
+                //Toast.makeText(this, "It works", Toast.LENGTH_SHORT).show();
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, MyFileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".my.package.name.provider", photoFile));
                 System.out.print("NEED");
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
             }
         }
     }
@@ -213,19 +270,46 @@ public class NewTransaction extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        // if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+
+//           mImageUri = data.getData();
+//           mObjectImage.setImageURI(mImageUri);
             try {
                 mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
-                mObjectView.setImageBitmap(mImageBitmap);
+                //mObjectImage.setImageBitmap(mImageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            mImageUri = Uri.fromFile(photoFile);
+            Log.d("fuckFirebase", mImageUri.toString());
+            mObjectImage.setImageURI(mImageUri);
+
+
+//            Bitmap mImageUri1 = (Bitmap) data.getExtras().get("data");
+//            mObjectImage.setImageBitmap(mImageUri1);
+//
+//            Toast.makeText(this, "Image saved to:\n" +
+//                  data.getExtras().get("data"), Toast.LENGTH_LONG).show();
         }
     }
 
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            try {
+//                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
+//                mObjectView.setImageBitmap(mImageBitmap);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+
     /**
      * Checks if the app has permission to write to device storage
-     *
+     * <p>
      * If the app does not has permission then the user will be prompted to grant permissions
      *
      * @param activity
@@ -245,3 +329,4 @@ public class NewTransaction extends AppCompatActivity {
     }
 
 }
+
