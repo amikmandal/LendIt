@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -39,6 +40,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import android.content.pm.ActivityInfo;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -97,20 +99,35 @@ public class LoginActivity extends AppCompatActivity  {
         //to do : initiate muser in every case
 
 
+        // try making a sharedPref that changes when you go to transaction adapter - and is removed when you complete transaction
+        if(sharedPref.contains("inTransaction") && sharedPref.contains("user")){
+            Toast.makeText(this, "This went to LoginActivity, but it contains user and inTransaction. Should go to NewTransaction", Toast.LENGTH_LONG).show();
+            //make it continue on to NewTransaction
+            //BUT MAKE SURE THE SHIT YOU TYPED IN STAYS THERE
+            Intent intent = new Intent(this, NewTransaction.class);
+            this.startActivity(intent);
+            finish();
+        }
 
+        //testing to determine if it it should be inTransaction
+        if(!sharedPref.contains("inTransaction")){
+            Toast.makeText(this, "Does NOT contain inTransaction", Toast.LENGTH_SHORT).show();
+        }
 
         //if user was already logged in, it will go straight to main
-//        if(sharedPref.contains("user")) {
-//            Log.d("user---------", sharedPref.getString("user", null));
-//            Intent intent = new Intent(this, MainActivity.class);
-//            intent.putExtra("username", sharedPref.getString("user", null));
-//            Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
-//            intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
-//            intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
-//            intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
-//            this.startActivity(intent);
-//            finish();
-//        }
+        if(sharedPref.contains("user")) {
+            Log.d("user---------", sharedPref.getString("user", null));
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("username", sharedPref.getString("user", null));
+            Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
+            intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
+            intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
+            intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
+            this.startActivity(intent);
+            finish();
+        }
+
+
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();

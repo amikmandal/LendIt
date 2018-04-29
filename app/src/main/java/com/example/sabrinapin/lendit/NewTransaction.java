@@ -95,7 +95,16 @@ public class NewTransaction extends AppCompatActivity {
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
+        //adding inTransaction to shared preferences
+
         storageRef = FirebaseStorage.getInstance().getReference();
+        sharedPref.edit().putString("inTransaction","uselessString").commit();
+        if(sharedPref.contains("inTransaction")){
+            Toast.makeText(this, "inTransaction is now in sharedPref", Toast.LENGTH_LONG).show();
+        }
+
+
+
 
 
 
@@ -171,19 +180,21 @@ public class NewTransaction extends AppCompatActivity {
                                         tRef.child(ownerUN).push().setValue(tInfo);
                                         tRef.child(borrowerUN).push().setValue(tInfo);
 
+                                        sharedPref.edit().remove("inTransaction").commit();
+                                        startActivity(new Intent(NewTransaction.this, MainActivity.class));
+                                        finish();
                                     }
                                 });
 
-                                startActivity(new Intent(NewTransaction.this, MainActivity.class));
 
                             }
 
 
 
 
-                            Intent intent = new Intent(NewTransaction.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+//                            Intent intent = new Intent(NewTransaction.this, MainActivity.class);
+//                            startActivity(intent);
+//                            finish();
                         }
                         else{
                             if ((!snapshot.hasChild(mBorrower.getText().toString()))&&(!snapshot.hasChild(mOwner.getText().toString()))){
@@ -203,7 +214,8 @@ public class NewTransaction extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        sharedPref.edit().remove("inTransaction").commit();
+                        finish();
                     }
                 });
 
@@ -245,7 +257,7 @@ public class NewTransaction extends AppCompatActivity {
                 mDbHelper.addEvent(ev);
                 mDbHelper.closeDB();
 
-
+                sharedPref.edit().remove("inTransaction").commit();
 
             }
         });
@@ -253,6 +265,7 @@ public class NewTransaction extends AppCompatActivity {
         mCancelTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sharedPref.edit().remove("inTransaction").commit();
                 finish();
             }
         });
@@ -347,6 +360,16 @@ public class NewTransaction extends AppCompatActivity {
                     REQUEST_EXTERNAL_STORAGE
             );
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //when back is pressed
+        Toast.makeText(this, "you should be going back to main", Toast.LENGTH_LONG).show();
+        sharedPref.edit().remove("inTransaction").commit();
+        Intent intent = new Intent(NewTransaction.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

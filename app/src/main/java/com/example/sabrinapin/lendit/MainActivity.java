@@ -1,47 +1,33 @@
 package com.example.sabrinapin.lendit;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.internal.Storage;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
 import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
-import static com.example.sabrinapin.lendit.LoginActivity.mUser;
-import static com.example.sabrinapin.lendit.LoginActivity.userID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -129,7 +115,16 @@ public class MainActivity extends AppCompatActivity {
 
         //Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
 
+        if(sharedPref.contains("inTransaction")){
+            intent = new Intent(this, NewTransaction.class);
+            this.startActivity(intent);
+            Toast.makeText(this, "inTransaction is in sharedPref: FIX THIS", Toast.LENGTH_LONG).show();
+            finish();
+        }
 
+        if(!sharedPref.contains("inTransaction")){
+            Toast.makeText(this, "inTransaction is NOT in sharedPref", Toast.LENGTH_LONG).show();
+        }
 
 
 
@@ -249,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPref.edit().remove("user").commit();
         sharedPref.edit().remove("firstName").commit();
         sharedPref.edit().remove("lastName").commit();
+        sharedPref.edit().remove("inTransaction").commit();
 
         //takes us back to LoginActivity
         startActivity(new Intent(this, LoginActivity.class));
