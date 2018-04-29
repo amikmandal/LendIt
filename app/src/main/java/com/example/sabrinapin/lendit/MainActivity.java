@@ -24,11 +24,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private String userID;
     private String mUsername;
     private ArrayList <String> gotUsername = new ArrayList<String>();
+
 
 
 
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
+
 
 
         myRef = mFirebaseDatabase.getReference().child("usernames").child(userID);

@@ -22,11 +22,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +64,10 @@ public class NewTransaction extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    public StorageReference storageRef;
+    public File mphotoFile = null;
+    private Uri mImageUri = null;
+
 
 
     @Override
@@ -83,14 +91,20 @@ public class NewTransaction extends AppCompatActivity {
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
+        storageRef = FirebaseStorage.getInstance().getReference();
+
+
 
 
         final Activity thisActivity = this;
+
         mTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 verifyStoragePermissions(thisActivity);
                 dispatchTakePictureIntent();
+
+
             }
         });
 
@@ -100,6 +114,28 @@ public class NewTransaction extends AppCompatActivity {
 
 
                 mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+
+                Log.d("wonka", mImageUri.toString());
+                if (mImageUri != null) {
+
+                    StorageReference filepath = storageRef.child(mImageUri.getLastPathSegment());
+                    Log.d("firepath", filepath.toString());
+
+                    //Toast.makeText(thisActivity, "hey its working", Toast.LENGTH_SHORT).show();
+
+                    UploadTask uploadTask = filepath.putFile(mImageUri);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(thisActivity, "dafuq", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    startActivity(new Intent(NewTransaction.this, MainActivity.class));
+
+                }
+
+
 
                 DatabaseReference myRef = mRef.getReference("users");
 
@@ -222,18 +258,19 @@ public class NewTransaction extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             System.out.println("YOU");
             // Create the File where the photo should go
-            File photoFile = null;
+
             try {
-                photoFile = createImageFile();
+                mphotoFile = createImageFile();
+                Log.d("filepath", mphotoFile.toString());
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 Log.i(TAG, "IOException");
                 ex.printStackTrace();
             }
             // Continue only if the File was successfully created
-            if (photoFile != null) {
+            if (mphotoFile != null) {
                 System.out.println("YOU");
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, MyFileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".my.package.name.provider",photoFile));
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, MyFileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".my.package.name.provider",mphotoFile));
                 System.out.print("NEED");
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -266,12 +303,18 @@ public class NewTransaction extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            try {
-                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
-                mObjectView.setImageBitmap(mImageBitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Log.d("cokeacola", "here");
+            mImageUri = Uri.fromFile(mphotoFile);
+            Log.d("fuckFirebase", mImageUri.toString());
+            mObjectView.setImageURI(mImageUri);
+
+
+//            try {
+//                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
+//                mObjectView.setImageBitmap(mImageBitmap);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
