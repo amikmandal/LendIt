@@ -142,7 +142,7 @@ public class NewTransaction extends AppCompatActivity {
                         if ((snapshot.hasChild(mBorrower.getText().toString()))&&(snapshot.hasChild(mOwner.getText().toString()))) {
                             FirebaseDatabase rRefs = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
                             DatabaseReference tRef = rRefs.getReference("checkNames");
-                            DatabaseReference pushRef = rRefs.getReference("users");
+
 
 
                             if (mImageUri != null) {

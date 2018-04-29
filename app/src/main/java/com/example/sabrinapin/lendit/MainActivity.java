@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                        int length = (int) dataSnapshot.getChildrenCount();
 
                         ArrayList<TransFirInfo> myArr = new ArrayList<TransFirInfo>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
