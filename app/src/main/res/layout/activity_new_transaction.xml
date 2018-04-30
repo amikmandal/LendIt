@@ -1,135 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewTransaction">
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_gravity="center"
+    android:layout_marginTop="23dp">
 
-    <EditText
-        android:id="@+id/BorrowerName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/editOwner"
-        android:layout_alignStart="@+id/editOwner"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <EditText
-        android:id="@+id/editOwner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/editItem"
-        android:layout_alignStart="@+id/selectDate"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <EditText
-        android:id="@+id/editItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/addToCalendar"
-        android:layout_toEndOf="@+id/returnDate"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <Button
-        android:id="@+id/takePicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="199dp"
-        android:text="Take Picture" />
-
-    <EditText
-        android:id="@+id/selectDate"
-        android:layout_width="152dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/takePicture"
-        android:layout_alignEnd="@+id/objectImage"
-        android:layout_marginBottom="-199dp"
-        android:layout_marginEnd="-33dp"
-        android:ems="10"
-        android:inputType="date" />
-
-    <TextView
-        android:id="@+id/returnDate"
-        android:layout_width="107dp"
-        android:layout_height="46dp"
-        android:layout_above="@+id/takePicture"
-        android:layout_marginBottom="-199dp"
-        android:layout_toStartOf="@+id/objectImage"
-        android:gravity="center"
-        android:text="Return Date:"
-        android:textAlignment="center"
-        android:textSize="18sp" />
-
-    <Button
-        android:id="@+id/addToCalendar"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/takePicture"
-        android:layout_alignEnd="@+id/editOwner"
-        android:layout_marginBottom="-199dp"
-        android:text="Add To Calendar"
-        android:textSize="7sp" />
-
-    <TextView
-        android:id="@+id/cancelTransaction"
+    <LinearLayout
+        android:id="@+id/linearlayoutscrollview"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:text="Cancel Transaction"
-        android:gravity="center"
-        android:background="#FF0000"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/objectImage"
-        android:layout_width="120dp"
-        android:layout_height="130dp"
-        android:layout_above="@+id/completeTransaction"
-        android:layout_centerHorizontal="true" />
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".NewTransaction">
 
-    <TextView
-        android:id="@+id/ownerText"
-        android:layout_width="wrap_content"
-        android:layout_height="46dp"
-        android:layout_above="@+id/itemText"
-        android:layout_alignStart="@+id/itemText"
-        android:gravity="center"
-        android:text="Owner Name:"
-        android:textSize="18sp" />
+            <EditText
+                android:id="@+id/BorrowerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/editOwner"
+                android:layout_alignStart="@+id/editOwner"
+                android:ems="10"
+                android:inputType="textPersonName" />
 
-    <TextView
-        android:id="@+id/itemText"
-        android:layout_width="107dp"
-        android:layout_height="46dp"
-        android:layout_above="@+id/addToCalendar"
-        android:layout_alignStart="@+id/returnDate"
-        android:gravity="center"
-        android:text="Item Name:"
-        android:textSize="18sp" />
+            <EditText
+                android:id="@+id/editOwner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/editItem"
+                android:layout_alignStart="@+id/selectDate"
+                android:ems="10"
+                android:inputType="textPersonName" />
 
-    <TextView
-        android:id="@+id/completeTransaction"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_above="@+id/cancelTransaction"
-        android:layout_alignParentStart="true"
-        android:gravity="center"
-        android:background="@android:color/holo_blue_dark"
-        android:text="Complete Transaction" />
+            <EditText
+                android:id="@+id/editItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/selectDate"
+                android:layout_alignStart="@+id/BorrowerName"
+                android:ems="10"
+                android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/BorrowerText"
-        android:layout_width="100dp"
-        android:layout_height="46dp"
-        android:layout_above="@+id/ownerText"
-        android:layout_alignStart="@+id/ownerText"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Borrower" />
+            <Button
+                android:id="@+id/takePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="199dp"
+                android:text="Take Picture" />
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/selectDate"
+                android:layout_width="152dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/takePicture"
+                android:layout_alignEnd="@+id/objectImage"
+                android:text="Pick Date"
+                android:layout_marginBottom="-199dp"
+                android:layout_marginEnd="-33dp"
+                android:ems="10"
+                android:inputType="date" />
+
+            <TextView
+                android:id="@+id/returnDate"
+                android:layout_width="107dp"
+                android:layout_height="46dp"
+                android:layout_above="@+id/takePicture"
+                android:layout_marginBottom="-199dp"
+                android:layout_toStartOf="@+id/objectImage"
+                android:gravity="center"
+                android:text="Return Date:"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/addToCalendar"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/takePicture"
+                android:layout_alignEnd="@+id/editOwner"
+                android:layout_marginBottom="-199dp"
+                android:text="Add To Calendar"
+                android:textSize="7sp" />
+
+            <ImageView
+                android:id="@+id/objectImage"
+                android:layout_width="150dp"
+                android:layout_height="218dp"
+                android:layout_below="@+id/takePicture"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="15dp" />
+
+            <TextView
+                android:id="@+id/ownerText"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:layout_above="@+id/itemText"
+                android:layout_alignStart="@+id/itemText"
+                android:gravity="center"
+                android:text="Owner Name:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/itemText"
+                android:layout_width="107dp"
+                android:layout_height="46dp"
+                android:layout_above="@+id/addToCalendar"
+                android:layout_alignStart="@+id/returnDate"
+                android:gravity="center"
+                android:text="Item Name:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/BorrowerText"
+                android:layout_width="100dp"
+                android:layout_height="46dp"
+                android:layout_above="@+id/ownerText"
+                android:layout_alignStart="@+id/ownerText"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Borrower" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/completeTransaction"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_above="@+id/cancelTransaction"
+            android:layout_alignParentStart="true"
+            android:paddingTop="10dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Complete Transaction" />
+
+        <TextView
+            android:id="@+id/cancelTransaction"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:paddingBottom="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="#FF0000"
+            android:gravity="center"
+            android:text="Cancel Transaction" />
+
+    </LinearLayout>
+</ScrollView>

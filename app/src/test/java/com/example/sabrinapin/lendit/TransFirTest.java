@@ -15,6 +15,7 @@ public class TransFirTest {
     private String owner;
     private TransFirInfo mTransFir;
 
+    //creates new TransFirInfo object using the "set" methods
     public void makeTransFir() {
         borrower = "Steve";
         date = "May";

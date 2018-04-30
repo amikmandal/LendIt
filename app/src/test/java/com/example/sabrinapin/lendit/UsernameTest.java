@@ -13,6 +13,7 @@ public class UsernameTest {
     private String lenditUsername;
     private UsernameInformation mUsername;
 
+    //creates new UsernameInformation object using "set" methods
     public void makeUsername(){
        name = "Katie";
         lenditUsername = "katiekat";
@@ -24,12 +25,14 @@ public class UsernameTest {
 
     //all "set" methods are already used in makeUsername method
 
+    //checks to see if setname and getname work correctly
     @Test
     public void userName() throws Exception {
         makeUsername();
         assertEquals(name, mUsername.getname());
     }
 
+    //checks to see if setlenditUsername and getlenditUsername work correctly
     @Test
     public void userLenditName() throws Exception {
         makeUsername();

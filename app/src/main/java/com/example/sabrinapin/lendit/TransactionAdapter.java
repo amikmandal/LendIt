@@ -84,7 +84,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         TextView mDate;
         TextView mBorrower;
         TextView mOwner;
-        ImageButton mButton;
         TextView mObject;
 
 
@@ -101,7 +100,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             this.mOwner = itemView.findViewById(R.id.mOwner);
             this.mBorrower = itemView.findViewById(R.id.mBorrower);
             this.mDate = itemView.findViewById(R.id.mDate);
-            this.mButton = itemView.findViewById(R.id.mButton);
             this.mObject = itemView.findViewById(R.id.mObject);
 
 

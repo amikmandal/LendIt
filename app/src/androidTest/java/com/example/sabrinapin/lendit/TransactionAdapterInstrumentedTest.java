@@ -6,6 +6,9 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
+
 import static org.junit.Assert.*;
 /**
  * Created by sabrinapin on 4/28/18.
@@ -13,68 +16,23 @@ import static org.junit.Assert.*;
 
 public class TransactionAdapterInstrumentedTest {
 
-    private String[] mPeople;
-    private String [] mDates;
-    private String[] mObjects;
-    private Bitmap[] mImages;
+    List<TransFirInfo> list;
     private Context mContext;
     private TransactionAdapter mTransactionAdapter;
 
     public void makeTransactionAdapter() {
-        mPeople = new String [2];
-        mPeople [0] = "Gus";
-        mPeople [1] = "Theo";
+        TransFirInfo a = new TransFirInfo();
+        a.setowner("Joe");
 
-        mDates = new String [2];
-        mDates [0] = "May";
-        mDates [1] = "April";
+        TransFirInfo b = new TransFirInfo();
+        b.setowner("Amik");
 
-        mObjects = new String [2];
-        mObjects [0] = "book";
-        mObjects [1] = "shirt";
 
-        //making tester bitmap objects
-        Bitmap b = Bitmap.createBitmap(12, 12, Bitmap.Config.ARGB_8888);
-        Bitmap b2 = Bitmap.createBitmap(12, 12, Bitmap.Config.ARGB_8888);
-
-        mImages = new Bitmap [2];
-        mImages [0] = b;
-        mImages [1] = b2;
-
-        //CHECK OUT INSTRUMENTAL UNIT TEST FOR FAKE CONTEXT
         mContext = InstrumentationRegistry.getTargetContext();
 
-        mTransactionAdapter = new TransactionAdapter(mContext, mPeople, mDates, mObjects, mImages);
+       // mTransactionAdapter = new TransactionAdapter(mContext, list);
     }
 
 
-    //put in methods later
-
-    //tests all methods associated with "people" String array
-    @Test
-    public void transactionAdapterPeople () throws Exception {
-        //test methods
-        //assertequals statement
-    }
-
-    //tests all methods associated with "date" String array
-    @Test
-    public void transactionAdapterDates () throws Exception {
-        //test methods
-        //assertequals statement
-    }
-
-    //tests all methods associated with "object" String array
-    @Test
-    public void transactionAdapterObjects () throws Exception {
-        //test methods
-        //assertequals statement
-    }
-
-    //tests all methods associated with "image" Bitmap array
-    @Test
-    public void transactionAdapterImages () throws Exception {
-        //test methods
-        //assertequals statement
-    }
+    //test getLength method
 }

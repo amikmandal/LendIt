@@ -11,12 +11,15 @@ public class User {
     private String USER_ID;
     private String USERNAME;
 
+    //Creates a user object to store first and last name and unique Facebook ID
+    //First used in LoginActivity, then later called in UsernameActivity to retireve first and last name, along with ID
     public User(String firstName, String lastName, String userID){
         USER_FIRST = firstName;
         USER_LAST = lastName;
         USER_ID = userID;
     }
 
+    //used for instances that setting is necessary
     public User(){
 
     }

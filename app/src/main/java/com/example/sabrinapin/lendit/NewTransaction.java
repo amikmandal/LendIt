@@ -2,6 +2,8 @@ package com.example.sabrinapin.lendit;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -17,19 +19,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventAttendee;
-import com.google.api.services.calendar.model.EventDateTime;
-import com.google.api.services.calendar.model.EventReminder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +44,7 @@ import java.sql.Ref;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
@@ -54,17 +54,23 @@ import static com.example.sabrinapin.lendit.LoginActivity.userID;
 
 public class NewTransaction extends AppCompatActivity {
 
-
+    //all views
     EditText mOwner, mItem, mBorrower;
     Button mTakePicture, mUploadPicture, mAddToCalendar;
     TextView mReturnDate, mCompleteTransaction, mCancelTransaction, mDate;
     ImageView mObjectView;
+    ScrollView mScrollView;
+    LinearLayout mLinearLayout;
+
     private String mPhotoDirectory;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private String mCurrentPhotoPath;
     private static final String TAG = NewTransaction.class.getSimpleName();
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private int year, month, date;
+    static final int DIALOG_ID = 0;
+
     //    private Firebase mRef;
     private FirebaseDatabase mRef;
     private SharedPreferences sharedPref;
@@ -76,7 +82,6 @@ public class NewTransaction extends AppCompatActivity {
     public StorageReference storageRef;
     public File mphotoFile = null;
     private Uri mImageUri = null;
-    Calendar service;
 
 
 
@@ -86,6 +91,7 @@ public class NewTransaction extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_transaction);
 
+        //create all views
         mOwner = findViewById(R.id.editOwner);
         mItem = findViewById(R.id.editItem);
         mBorrower = findViewById(R.id.BorrowerName);
@@ -96,20 +102,28 @@ public class NewTransaction extends AppCompatActivity {
         mCancelTransaction = findViewById(R.id.cancelTransaction);
         mObjectView = findViewById(R.id.objectImage);
         mCompleteTransaction = findViewById(R.id.completeTransaction);
+        mScrollView = findViewById(R.id.scrollView);
+        mLinearLayout = findViewById(R.id.linearlayoutscrollview);
 
+        //initializes sharedPref so that app will recognize user in NewTransaction
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
+
+        //takes in user's information previously stored in shared preferences
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
         //adding inTransaction to shared preferences
 
         storageRef = FirebaseStorage.getInstance().getReference();
-        sharedPref.edit().putString("inTransaction","uselessString").commit();
-        if(sharedPref.contains("inTransaction")){
-            Toast.makeText(this, "inTransaction is now in sharedPref", Toast.LENGTH_LONG).show();
-        }
 
+        //tells app that user is in NewTransaction - used when user exits app
+        sharedPref.edit().putString("inTransaction","uselessString").commit();
+
+        //this was used to test
+        if(sharedPref.contains("inTransaction")){
+            //Toast.makeText(this, "inTransaction is now in sharedPref", Toast.LENGTH_LONG).show();
+        }
 
 
         mAddToCalendar.setOnClickListener(new View.OnClickListener() {
@@ -118,19 +132,21 @@ public class NewTransaction extends AppCompatActivity {
                 addEvent();
             }
         });
-
-
-
-
         final Activity thisActivity = this;
 
+        //takes picture once user clicks on button
         mTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 verifyStoragePermissions(thisActivity);
                 dispatchTakePictureIntent();
+            }
+        });
 
-
+        mDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog(DIALOG_ID);
             }
         });
 
@@ -143,8 +159,7 @@ public class NewTransaction extends AppCompatActivity {
 
                 Log.d("wonka", mImageUri.toString());
 
-                //check if the borrower exists
-
+                //Checks if the borrower exists
                 DatabaseReference myUsernames = mRef.getReference("checkNames");
 
                 myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -270,6 +285,7 @@ public class NewTransaction extends AppCompatActivity {
                 mDbHelper.addEvent(ev);
                 mDbHelper.closeDB();
 
+                //once the transaction is completed, the app will no longer return to NewTransaction
                 sharedPref.edit().remove("inTransaction").commit();
 
             }
@@ -278,6 +294,7 @@ public class NewTransaction extends AppCompatActivity {
         mCancelTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //once the transaction is cancelled, the app will no longer return to NewTransaction
                 sharedPref.edit().remove("inTransaction").commit();
                 finish();
             }
@@ -286,7 +303,29 @@ public class NewTransaction extends AppCompatActivity {
 
     }
 
+    @Override
+    protected Dialog onCreateDialog(int id)
+    {
+        if(id==DIALOG_ID)
+        {
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            int currentMonth=Calendar.getInstance().get(Calendar.MONTH);
+            int currentDate=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);;
+            //Toast.makeText(this, formattedDate.substring(5,6), Toast.LENGTH_SHORT).show();
+            return new DatePickerDialog(this, dPickerListener, currentYear , currentMonth, currentDate);
+        }
+        return null;
+    }
 
+    private DatePickerDialog.OnDateSetListener dPickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+            year = i;
+            month = i1;
+            date = i2;
+            mDate.setText(month+"/"+date+"/"+year);
+        }
+    };
 
     private void dispatchTakePictureIntent() {
         System.out.println("HEY");
@@ -339,9 +378,9 @@ public class NewTransaction extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Log.d("cokeacola", "here");
+            Log.d("trial", "here");
             mImageUri = Uri.fromFile(mphotoFile);
-            Log.d("fuckFirebase", mImageUri.toString());
+            Log.d("FirebaseURL", mImageUri.toString());
             mObjectView.setImageURI(mImageUri);
 
 
@@ -375,10 +414,13 @@ public class NewTransaction extends AppCompatActivity {
         }
     }
 
+    //when back is pressed - will go back to main
     @Override
     public void onBackPressed() {
-        //when back is pressed
-        Toast.makeText(this, "you should be going back to main", Toast.LENGTH_LONG).show();
+        //when back is pressed, app will no longer recognize NewTransaction as current activity
+
+        //Toast used to test
+        //Toast.makeText(this, "you should be going back to main", Toast.LENGTH_LONG).show();
         sharedPref.edit().remove("inTransaction").commit();
         Intent intent = new Intent(NewTransaction.this, MainActivity.class);
         startActivity(intent);

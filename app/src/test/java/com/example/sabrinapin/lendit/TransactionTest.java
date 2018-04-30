@@ -13,6 +13,7 @@ public class TransactionTest {
     private byte[] mImage;
     private Transaction mTransaction;
 
+    //creates a new Transaction using parameters
     public void makeTransaction(){
         mOwner = "George";
         mItem = "book";

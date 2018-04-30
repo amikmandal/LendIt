@@ -1,9 +1,12 @@
 package com.example.sabrinapin.lendit;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +41,7 @@ public class CaldroidSampleActivity extends AppCompatActivity {
     private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
     private CalendarDisplayAdapter mAdapter;
     private RecyclerView mRecyclerView;
+    private SharedPreferences sharedPref;
     private void setCustomResourceForDates() {
         Calendar cal = Calendar.getInstance();
 
@@ -121,6 +125,11 @@ public class CaldroidSampleActivity extends AppCompatActivity {
         // Setup caldroid fragment
         // **** If you want normal CaldroidFragment, use below line ****
         caldroidFragment = new CaldroidFragment();
+
+        //takes in common shared preferences
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        //used later to determine that the user is in the calendar
+        sharedPref.edit().putString("inCalendar","uselessString").commit();
 
         // //////////////////////////////////////////////////////////////////////
         // **** This is to show customized fragment. If you want customized
@@ -382,6 +391,15 @@ public class CaldroidSampleActivity extends AppCompatActivity {
             dialogCaldroidFragment.saveStatesToKey(outState,
                     "DIALOG_CALDROID_SAVED_STATE");
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //when user presses back arrow, the app will no longer recognize Calendar as the current activity
+        sharedPref.edit().remove("inCalendar").commit();
+        Intent intent = new Intent(CaldroidSampleActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

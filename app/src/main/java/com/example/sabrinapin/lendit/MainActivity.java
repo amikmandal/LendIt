@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference DBR;
     private FirebaseDatabase FDB;
 
+    //sets up bottom bar so user can navigate between activities
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -97,10 +98,13 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView = findViewById(R.id.mRecyclerView);
         mFirebaseDatabase = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
-        //TAKING SHARED PREF BACK
+        //initializes sharedPref - this shared preference carries same information across all activities
+
         rebuild = getIntent().getBooleanExtra("rebuild", false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
+
+        //retrieves user's information from shared preferences
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
@@ -154,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
 
+        //
         if(sharedPref.contains("inTransaction")){
             intent = new Intent(this, NewTransaction.class);
             this.startActivity(intent);
@@ -161,10 +166,12 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        if(!sharedPref.contains("inTransaction")){
-            Toast.makeText(this, "inTransaction is NOT in sharedPref", Toast.LENGTH_LONG).show();
+        //If a user exits the app while in Calendar, the app will return to that activity
+        if(sharedPref.contains("inCalendar")){
+            intent = new Intent(this, CaldroidSampleActivity.class);
+            this.startActivity(intent);
+            finish();
         }
-
 
 
 //        mPeople = new String[transactionList.size()];
@@ -174,17 +181,21 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+        //Sets up bottom navigation bar
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        //Creates an ArrayList of TransFirInfo objects to be later used in creating a new Transaction Adapter
         ArrayList<TransFirInfo> trialList = new ArrayList<TransFirInfo>();
         TransFirInfo first = new TransFirInfo();
         first.setowner("werido");
         first.setdate("3/3/3");
         first.setborrower("people");
-        first.setitem("shit");
+        first.setitem("stuff");
         first.setImageUrl("https://firebasestorage.googleapis.com/v0/b/lendit-af1e0.appspot.com/o/JPEG_20180429_074637_1948933449012095423.jpg?alt=media&token=720d7752-e0f3-4c5e-84b1-7e18354580cb");
         trialList.add(first);
+
+        //Creates new TransactionAdapter
         mAdapter = new TransactionAdapter(this, trialList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -203,10 +214,10 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("instance", mUsername);
 
 
-                // put the username in Shared preferences, so that we can access it through the other activity
+                //Places the username in Shared preferences, so that we can access it through the other activity
                 mtransRef = mFirebaseDatabase.getReference().child("users").child(myUsername);
 
-                // catch an exception if the user doesn't exist in the database: leave the array as an empty one if the data does not exist
+                //Catches an exception if the user doesn't exist in the database: leave the array as an empty one if the data does not exist
 
 
                 mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -243,9 +254,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
             }
 
             @Override
@@ -253,13 +261,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-
-
 
 
     }
@@ -282,41 +283,27 @@ public class MainActivity extends AppCompatActivity {
 
 //    }
 
+    //Allows user to log out of Facebook
     private void logOut() {
         LoginManager.getInstance().logOut();
-        //changeD TO MATCH SHAREDPREF TO ENSURE THAT USER/FIRST/LAST ARE ALL CLEARED
 
+        //clears all information from shared preferences
         sharedPref.edit().remove("user").commit();
         sharedPref.edit().remove("firstName").commit();
         sharedPref.edit().remove("lastName").commit();
         sharedPref.edit().remove("inTransaction").commit();
+        sharedPref.edit().remove("inCalendar").commit();
+        sharedPref.edit().remove("inUserNameActivity").commit();
 
         SQLiteJDBC sql = new SQLiteJDBC(getApplicationContext());
 
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println(sql.getAllEvents().size());
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
-        System.out.println("*****");
 
         sql.onUpgrade(sql.getReadableDatabase(), 1, 2);
 
 
 //        getApplicationContext().deleteDatabase(SQLiteJDBC.getTableName());
 
-        //takes us back to LoginActivity
+        //takes user back to LoginActivity
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
@@ -427,4 +414,3 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
-
