@@ -31,6 +31,7 @@ public class UsernameActivity extends AppCompatActivity {
 
     EditText usernameView;
     TextView welcomeView;
+    Button submit;
     private String usernameInput;
     SharedPreferences sharedPref;
     private FirebaseDatabase mReference;
@@ -40,7 +41,9 @@ public class UsernameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_username);
 
+        //welcomeView - presents login instructions
         welcomeView = findViewById(R.id.welcomeMessage);
+        //EditText for user to input a unique username
         usernameView = findViewById(R.id.usernameInput);
 
         mReference = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
@@ -48,27 +51,33 @@ public class UsernameActivity extends AppCompatActivity {
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-
-
-
-
-
+        //preference used to make sure when user exits app and returns that app will go back to UsernameActivity
+        sharedPref.edit().putString("inUsernameActivity","uselessString").commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //submit button - when user presses the username will be stored
+        submit = findViewById(R.id.submitButton);
+
+        submit.setOnClickListener(new View.OnClickListener() {
+
+            //if user already has made a username, app will continue on to MainActivity
             @Override
             public void onClick(View view) {
                 String userId = mUser.getUSER_ID();
-                if(true){ Intent intent = new Intent(UsernameActivity.this, MainActivity.class);}
+                if(true){
+                    //The app will no longer recognize UserNameActivity as the current activity and continue onto Main instead
+                    sharedPref.edit().remove("inUsernameActivity").commit();
+                    Intent intent = new Intent(UsernameActivity.this, MainActivity.class);}
+
 //                DatabaseReference myRef = mReference.getReference("users");
 
                 DatabaseReference myUsernames = mReference.getReference("checkNames");
                 Log.d("nameRef", usernameView.getText().toString());
 
 
+                //method checks to see if username is unique
                 myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -78,7 +87,7 @@ public class UsernameActivity extends AppCompatActivity {
                             DatabaseReference putUsernames = mReference.getReference("usernames");
 
 
-
+                            //stores everything once user inputs new/unique username
                             USERNAME = usernameView.getText().toString();
                             mUser.setUSERNAME(USERNAME);
                             sharedPref.edit().putString("userName", USERNAME).commit();
@@ -91,6 +100,10 @@ public class UsernameActivity extends AppCompatActivity {
                             putUsernames.child(mUser.getUSER_ID()).setValue(infoA);
                             checkUsernames.child(USERNAME).setValue("exists");
 
+                            //when unique user is submitted, the app will no longer recognize UserNameActivity as the current activity
+                            sharedPref.edit().remove("inUsernameActivity").commit();
+
+                            //continues on to MainActivity once information is stored
                             Intent intent = new Intent(UsernameActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -104,25 +117,20 @@ public class UsernameActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
-
+                        //when cancelled, the app will no longer recognize UserNameActivity as the current activity
+                        sharedPref.edit().remove("inUsernameActivity").commit();
                     }
                 });
-
-
-
-//                myUsernames.child(userId).child("lenditUsername").setValue(USERNAME);
-//                myUsernames.child(userId).child("Name").setValue(USER_FIRST_NAME + " " + USER_LAST_NAME);
-                    //myRef.child(userId).child("username").setValue(USERNAME);
-
-
-
-
-
-
-
-
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        //when user presses back arrow, the app will no longer recognize UserNameActivity as the current activity
+        sharedPref.edit().remove("inUsernameActivity").commit();
+        Intent intent = new Intent(UsernameActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

@@ -21,8 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.services.calendar.Calendar;
 import com.google.firebase.database.DataSnapshot;
@@ -33,13 +31,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
 import java.io.IOException;
-import java.sql.Ref;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.userID;
@@ -47,19 +42,23 @@ import static com.example.sabrinapin.lendit.LoginActivity.userID;
 
 public class NewTransaction extends AppCompatActivity {
 
-
+    //all views
     EditText mOwner, mItem, mDate, mBorrower;
     Button mTakePicture, mUploadPicture, mAddToCalendar;
     TextView mReturnDate, mCompleteTransaction, mCancelTransaction;
     ImageView mObjectView;
+
+
     private String mPhotoDirectory;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private String mCurrentPhotoPath;
     private static final String TAG = NewTransaction.class.getSimpleName();
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    //    private Firebase mRef;
+
+    //Firebase variables
     private FirebaseDatabase mRef;
+    //common sharedPref
     private SharedPreferences sharedPref;
     private static final int REQUEST_READ_PHONE_STATE = 2;
     private static String[] PERMISSIONS_STORAGE = {
@@ -72,13 +71,12 @@ public class NewTransaction extends AppCompatActivity {
     Calendar service;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_transaction);
 
+        //creates all views
         mOwner = findViewById(R.id.editOwner);
         mItem = findViewById(R.id.editItem);
         mBorrower = findViewById(R.id.BorrowerName);
@@ -90,33 +88,28 @@ public class NewTransaction extends AppCompatActivity {
         mObjectView = findViewById(R.id.objectImage);
         mCompleteTransaction = findViewById(R.id.completeTransaction);
 
+        //initializes sharedPref so that app will recognize user is in NewTransaction
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
+
+        //takes user's information previously stored in shared preferences
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
         USER_LAST_NAME = sharedPref.getString("lastName", "dumber");
         userID = sharedPref.getString("user", "dumbest");
-        //adding inTransaction to shared preferences
 
         storageRef = FirebaseStorage.getInstance().getReference();
+
+        //tells app that user is in NewTransaciton - used when user exits app
         sharedPref.edit().putString("inTransaction","uselessString").commit();
-        if(sharedPref.contains("inTransaction")){
-            Toast.makeText(this, "inTransaction is now in sharedPref", Toast.LENGTH_LONG).show();
-        }
-
-
-
-
-
-
 
         final Activity thisActivity = this;
 
+        //takes picture once user clicks on button
         mTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 verifyStoragePermissions(thisActivity);
                 dispatchTakePictureIntent();
-
 
             }
         });
@@ -130,8 +123,7 @@ public class NewTransaction extends AppCompatActivity {
 
                 Log.d("wonka", mImageUri.toString());
 
-                //check if the borrower exists
-
+                //Checks if the borrower already exists
                 DatabaseReference myUsernames = mRef.getReference("checkNames");
 
                 myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -189,12 +181,6 @@ public class NewTransaction extends AppCompatActivity {
 
                             }
 
-
-
-
-//                            Intent intent = new Intent(NewTransaction.this, MainActivity.class);
-//                            startActivity(intent);
-//                            finish();
                         }
                         else{
                             if ((!snapshot.hasChild(mBorrower.getText().toString()))&&(!snapshot.hasChild(mOwner.getText().toString()))){
@@ -219,44 +205,14 @@ public class NewTransaction extends AppCompatActivity {
                     }
                 });
 
-//                DatabaseReference findUsername = mRef.getReference("usernames");
-//                // add the borrower username as a transaction
-//                String borrowerUsername = mBorrower.getText().toString();
-//                String borrowerId = findUsername.child(borrowerUsername).getKey();
-//                DatabaseReference nRef = myRef.child(borrowerId);
-//                String key = nRef.child(borrowerId).push().getKey();
-//                nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
-//                nRef.child(key).child("date").setValue(mDate.getText().toString());
-//                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
-//                nRef.child(key).child("item").setValue(mItem.getText().toString());
-//
-//
-//
-//                String ownerUsername = mOwner.getText().toString();
-//                String ownerId = findUsername.child(ownerUsername).getKey();
-//                DatabaseReference oRef = myRef.child(ownerId);
-//                //String keyO = nRef.child(borrowerId).push().getKey();
-//                String keyO = oRef.child(borrowerId).push().getKey();
-//                oRef.child(keyO).child("borrower").setValue(mBorrower.getText().toString());
-//                oRef.child(keyO).child("date").setValue(mDate.getText().toString());
-//                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
-//                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
-
-
-
-                // add the owner username as a transaction
-
-
-
-
+                //Creates object storing user's info that will later be used in calendar
                 EventObject ev = new EventObject(mBorrower.getText().toString() + " returns " + mItem.getText().toString() + " to " + mOwner.getText().toString(), mDate.getText().toString());
                 SQLiteJDBC mDbHelper = new SQLiteJDBC(thisActivity);
-
-
 
                 mDbHelper.addEvent(ev);
                 mDbHelper.closeDB();
 
+                //Once the transaction is completed, the app will no longer return to NewTransaction when opened
                 sharedPref.edit().remove("inTransaction").commit();
 
             }
@@ -265,6 +221,7 @@ public class NewTransaction extends AppCompatActivity {
         mCancelTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Once the transaction is cancelled, the app will no longer return to NewTransaction when opened
                 sharedPref.edit().remove("inTransaction").commit();
                 finish();
             }
@@ -323,21 +280,15 @@ public class NewTransaction extends AppCompatActivity {
         return image;
     }
 
+    //activity should interact w firebase
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Log.d("cokeacola", "here");
             mImageUri = Uri.fromFile(mphotoFile);
-            Log.d("fuckFirebase", mImageUri.toString());
+            Log.d("helloFirebase", mImageUri.toString());
             mObjectView.setImageURI(mImageUri);
 
-
-//            try {
-//                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
-//                mObjectView.setImageBitmap(mImageBitmap);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
         }
     }
 
@@ -362,10 +313,10 @@ public class NewTransaction extends AppCompatActivity {
         }
     }
 
+    //when back is pressed - will go back to main
     @Override
     public void onBackPressed() {
-        //when back is pressed
-        Toast.makeText(this, "you should be going back to main", Toast.LENGTH_LONG).show();
+        //when user presses back arrow, the app will no longer recognize NewTransaction as the current activity
         sharedPref.edit().remove("inTransaction").commit();
         Intent intent = new Intent(NewTransaction.this, MainActivity.class);
         startActivity(intent);

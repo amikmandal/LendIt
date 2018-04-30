@@ -9,6 +9,7 @@ public class UsernameInformation
     private String name;
     private String lenditUsername;
 
+    //used in UsernameActivity to store current user's unique username and first and last name (stored as "name")
     public UsernameInformation(){
 
 

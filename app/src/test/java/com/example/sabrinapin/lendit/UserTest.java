@@ -14,6 +14,7 @@ public class UserTest {
     private String USER_LAST;
     private String USER_ID;
 
+    //creates new user for testing
     public void makeUser(){
         USER_FIRST = "John";
         USER_LAST = "Cena";

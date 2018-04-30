@@ -1,9 +1,5 @@
 package com.example.sabrinapin.lendit;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,13 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -27,21 +16,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import android.content.pm.ActivityInfo;
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookActivity;
@@ -50,9 +26,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.Profile;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.Login;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.firebase.database.DataSnapshot;
@@ -74,9 +47,6 @@ public class LoginActivity extends AppCompatActivity  {
     TextView textView;
     CallbackManager callbackManager;
     SharedPreferences sharedPref;
-    //user's name
-
-    //userID
 
     public static String loginDecision = "loginInfo";
     public static String userID;
@@ -93,28 +63,34 @@ public class LoginActivity extends AppCompatActivity  {
         mRoot = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
         userRef = mRoot.getReference().child("users");
 
-        //NEW WAY HOW SHAREDPREFERENCES ARE STORED
+        //initializes sharedPrefrences
+        //we use sharedPreferences to determine what activity the user is in
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //to do : initiate muser in every case
+        //If a user exits the app while in UsernameActivity, the app will return to that activity
+        if(sharedPref.contains("inUsernameActivity") && sharedPref.contains("user")){
+            Intent intent = new Intent(this, UsernameActivity.class);
+            this.startActivity(intent);
+            finish();
+        }
 
-
-        // try making a sharedPref that changes when you go to transaction adapter - and is removed when you complete transaction
+        //If a user exits the app while in NewTransaction, the app will return to that transaction
         if(sharedPref.contains("inTransaction") && sharedPref.contains("user")){
-            Toast.makeText(this, "This went to LoginActivity, but it contains user and inTransaction. Should go to NewTransaction", Toast.LENGTH_LONG).show();
-            //make it continue on to NewTransaction
-            //BUT MAKE SURE THE SHIT YOU TYPED IN STAYS THERE
+           // Toast.makeText(this, "This went to LoginActivity, but it contains user and inTransaction. Should go to NewTransaction", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, NewTransaction.class);
             this.startActivity(intent);
             finish();
         }
 
-        //testing to determine if it it should be inTransaction
-        if(!sharedPref.contains("inTransaction")){
-            Toast.makeText(this, "Does NOT contain inTransaction", Toast.LENGTH_SHORT).show();
+
+        //If a user exits the app while in Calendar, the app will return to that activity
+        if(sharedPref.contains("inCalendar") && sharedPref.contains("user")){
+            Intent intent = new Intent(this, CaldroidSampleActivity.class);
+            this.startActivity(intent);
+            finish();
         }
 
-        //if user was already logged in, it will go straight to main
+        //If user exits app, but was already logged in, it will go straight to MainActivity
         if(sharedPref.contains("user")) {
             Log.d("user---------", sharedPref.getString("user", null));
             Intent intent = new Intent(this, MainActivity.class);
@@ -128,13 +104,13 @@ public class LoginActivity extends AppCompatActivity  {
         }
 
 
-
+        //sets up Facebook API
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_login);
 
+        //creates Facebook loginButton and textView
         loginButton = (LoginButton)findViewById(R.id.login_button);
-
         textView = (TextView)findViewById(R.id.textView);
 
 
@@ -148,13 +124,13 @@ public class LoginActivity extends AppCompatActivity  {
                 sharedPref.edit().putString("user", loginResult.getAccessToken().getUserId()).commit();
                 //Toast.makeText(LoginActivity.this, loginResult.getAccessToken().getUserId(), Toast.LENGTH_SHORT).show();
 
-                //gets profile
+                //gets profile accessToken
                 AccessToken accessToken = loginResult.getAccessToken();
 
                 //saves User ID
                 userID = loginResult.getAccessToken().getUserId();
 
-                //Testing from stackOverflow
+                //From stackoverflow - stores user's first and last name using JSON object
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -188,8 +164,9 @@ public class LoginActivity extends AppCompatActivity  {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                //continues to nextActivity, which is MainActivity
-                                //NEXT ACTIVITY IS MOVED HERE BECAUSE THIS METHOD IS ASYNCHRONOUS
+
+                                //THIS METHOD IS ASYNCHRONOUS
+                                //checks usernames
                                 DatabaseReference myUsernames = mRoot.getReference("usernames");
 
                                 myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -213,9 +190,6 @@ public class LoginActivity extends AppCompatActivity  {
                                 });
 
 
-
-
-
                             }
 
                         });
@@ -225,7 +199,7 @@ public class LoginActivity extends AppCompatActivity  {
                 request.setParameters(parameters);
                 request.executeAsync();
 
-                //made a user object
+                //Creates/initializes user object
                 mUser.setUSER_ID(userID);
                 mUser.setUSER_FIRST(USER_FIRST_NAME);
                 mUser.setUSER_LAST(USER_LAST_NAME);
@@ -243,7 +217,7 @@ public class LoginActivity extends AppCompatActivity  {
 
             @Override
             public void onCancel() {
-                //When user cancels attempt
+                //When user cancels attempt it returns back to login screen
                 textView.setText("Attempt is cancelled");
             }
 
@@ -264,24 +238,17 @@ public class LoginActivity extends AppCompatActivity  {
     }
 
 
-
+    //This is only called when login is successful
     private void nextActivity(){
-        //only called when login is Successful
 
-        //if true then skip
-        //if(else) sharedpreference yields a certain thing have it continue to username activity
-
-        //takes in current info then goes to MainActivity
+        //Goes to UsernameActivity
         Intent intent = new Intent(LoginActivity.this, UsernameActivity.class);
-        //eventually put it so that it goes onto UsernameActivity.class
-
-
         intent.putExtra("firstname", sharedPref.getString("firstName", "Swathi"));
         intent.putExtra("lastname", sharedPref.getString("lastName","Ramprasad"));
         intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));
         startActivity(intent);
 
-        //when you press back arrow it will end
+        //When you press back arrow it will end
         finish();
     }
 

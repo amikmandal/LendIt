@@ -13,6 +13,7 @@ public class TransactionTest {
     private byte[] mImage;
     private Transaction mTransaction;
 
+    //creates a new Transaction using parameters
     public void makeTransaction(){
         mOwner = "George";
         mItem = "book";
@@ -62,9 +63,6 @@ public class TransactionTest {
         String toS = mOwner + " " + mItem + " " + mDate + " " + mImage;
         assertEquals(toS, mTransaction.toString());
     }
-
-    //ASK NIALL ABOUT PARCELS
-    //nevermind - we don't use parcels!
 
     //method taken from Dave L in "Convert a string represenation of a hex dump to a byte array using Java?"
     //this was in a stackoverflow post
