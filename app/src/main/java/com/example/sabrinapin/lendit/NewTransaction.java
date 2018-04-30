@@ -150,143 +150,283 @@ public class NewTransaction extends AppCompatActivity {
             }
         });
 
+
+
+//        mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//
+//                mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+//
+//                Log.d("wonka", mImageUri.toString());
+//
+//                //Checks if the borrower exists
+//                DatabaseReference myUsernames = mRef.getReference("checkNames");
+//
+//                myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot snapshot) {
+//
+//
+//                        if ((snapshot.hasChild(mBorrower.getText().toString()))&&(snapshot.hasChild(mOwner.getText().toString()))) {
+//                            FirebaseDatabase rRefs = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+//                            DatabaseReference tRef = rRefs.getReference("checkNames");
+//                                DatabaseReference pushRef = rRefs.getReference("users");
+//
+//
+//                            if (mImageUri != null) {
+//
+//                                StorageReference filepath = storageRef.child(mImageUri.getLastPathSegment());
+//                                Log.d("firepath", filepath.toString());
+//
+//                                //Toast.makeText(thisActivity, "hey its working", Toast.LENGTH_SHORT).show();
+//
+//                                UploadTask uploadTask = filepath.putFile(mImageUri);
+//                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                    @Override
+//                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//
+//                                        FirebaseDatabase trial = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+//                                        DatabaseReference tRef = trial.getReference("users");
+//
+//                                        Toast.makeText(thisActivity, "dafuq", Toast.LENGTH_SHORT).show();
+//                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+//                                        TransFirInfo tInfo = new TransFirInfo();
+//                                        tInfo.setborrower(mBorrower.getText().toString());
+//                                        tInfo.setdate(mDate.getText().toString());
+//                                        tInfo.setitem(mItem.getText().toString());
+//                                        tInfo.setowner(mOwner.getText().toString());
+//                                        tInfo.setImageUrl(downloadUrl.toString());
+//
+//                                        Log.d("latte", downloadUrl.toString());
+//                                        //tRef.child("image").setValue(downloadUrl.toString());
+//
+//                                        String borrowerUN = mBorrower.getText().toString();
+//                                        String ownerUN = mOwner.getText().toString();
+//
+//
+//                                        tRef.child(ownerUN).push().setValue(tInfo);
+//                                        tRef.child(borrowerUN).push().setValue(tInfo);
+//
+//                                        sharedPref.edit().remove("inTransaction").commit();
+//                                        startActivity(new Intent(NewTransaction.this, MainActivity.class));
+//                                        finish();
+//                                    }
+//                                });
+//
+//
+//                            }
+//
+//
+//
+//
+////                            Intent intent = new Intent(NewTransaction.this, MainActivity.class);
+////                            startActivity(intent);
+////                            finish();
+//                        }
+//                        else{
+//                            if ((!snapshot.hasChild(mBorrower.getText().toString()))&&(!snapshot.hasChild(mOwner.getText().toString()))){
+//                                Toast.makeText(NewTransaction.this, "Both the user and borrower are not registered", Toast.LENGTH_LONG).show();
+//                            }
+//
+//                            else if(!(snapshot.hasChild(mBorrower.getText().toString()))) {
+//                                Toast.makeText(NewTransaction.this, "This borrower is not registered", Toast.LENGTH_LONG).show();
+//                            }
+//
+//                            else if(!(snapshot.hasChild(mOwner.getText().toString()))) {
+//                                Toast.makeText(NewTransaction.this, "This owner is not registered", Toast.LENGTH_LONG).show();
+//                            }
+//
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        sharedPref.edit().remove("inTransaction").commit();
+//                        finish();
+//                    }
+//                });
+//
+////                DatabaseReference findUsername = mRef.getReference("usernames");
+////                // add the borrower username as a transaction
+////                String borrowerUsername = mBorrower.getText().toString();
+////                String borrowerId = findUsername.child(borrowerUsername).getKey();
+////                DatabaseReference nRef = myRef.child(borrowerId);
+////                String key = nRef.child(borrowerId).push().getKey();
+////                nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
+////                nRef.child(key).child("date").setValue(mDate.getText().toString());
+////                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
+////                nRef.child(key).child("item").setValue(mItem.getText().toString());
+////
+////
+////
+////                String ownerUsername = mOwner.getText().toString();
+////                String ownerId = findUsername.child(ownerUsername).getKey();
+////                DatabaseReference oRef = myRef.child(ownerId);
+////                //String keyO = nRef.child(borrowerId).push().getKey();
+////                String keyO = oRef.child(borrowerId).push().getKey();
+////                oRef.child(keyO).child("borrower").setValue(mBorrower.getText().toString());
+////                oRef.child(keyO).child("date").setValue(mDate.getText().toString());
+////                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
+////                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
+//
+//
+//
+//                // add the owner username as a transaction
+//
+//
+//
+//
+//                EventObject ev = new EventObject(mBorrower.getText().toString() + " returns " + mItem.getText().toString() + " to " + mOwner.getText().toString(), mDate.getText().toString());
+//                SQLiteJDBC mDbHelper = new SQLiteJDBC(thisActivity);
+//
+//
+//
+//                mDbHelper.addEvent(ev);
+//                mDbHelper.closeDB();
+//
+//                //once the transaction is completed, the app will no longer return to NewTransaction
+//                sharedPref.edit().remove("inTransaction").commit();
+//
+//            }
+//        });
+
         mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
-                Log.d("wonka", mImageUri.toString());
+                if (mBorrower.getText().toString().matches("")||mItem.getText().toString().matches("")||mOwner.getText().toString().matches("")||mDate.getText().toString().matches("")) {
+                    Toast.makeText(thisActivity, "one or more of your fields is empty", Toast.LENGTH_SHORT).show();
 
-                //Checks if the borrower exists
-                DatabaseReference myUsernames = mRef.getReference("checkNames");
+                }
 
-                myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
+                else{
+
+                    Toast.makeText(thisActivity, "Processing Transaction", Toast.LENGTH_LONG).show();
+                    mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
 
 
-                        if ((snapshot.hasChild(mBorrower.getText().toString()))&&(snapshot.hasChild(mOwner.getText().toString()))) {
-                            FirebaseDatabase rRefs = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
-                            DatabaseReference tRef = rRefs.getReference("checkNames");
+
+                    //check if the borrower exists
+
+                    DatabaseReference myUsernames = mRef.getReference("checkNames");
+
+                    myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+
+
+                            if ((snapshot.hasChild(mBorrower.getText().toString())) && (snapshot.hasChild(mOwner.getText().toString()))) {
+                                FirebaseDatabase rRefs = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+                                DatabaseReference tRef = rRefs.getReference("checkNames");
                                 DatabaseReference pushRef = rRefs.getReference("users");
 
 
-                            if (mImageUri != null) {
+                                if (mImageUri != null) {
 
-                                StorageReference filepath = storageRef.child(mImageUri.getLastPathSegment());
-                                Log.d("firepath", filepath.toString());
+                                    StorageReference filepath = storageRef.child(mImageUri.getLastPathSegment());
+                                    Log.d("firepath", filepath.toString());
 
-                                //Toast.makeText(thisActivity, "hey its working", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(thisActivity, "hey its working", Toast.LENGTH_SHORT).show();
 
-                                UploadTask uploadTask = filepath.putFile(mImageUri);
-                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-
-                                        FirebaseDatabase trial = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
-                                        DatabaseReference tRef = trial.getReference("users");
-
-                                        Toast.makeText(thisActivity, "dafuq", Toast.LENGTH_SHORT).show();
-                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                        TransFirInfo tInfo = new TransFirInfo();
-                                        tInfo.setborrower(mBorrower.getText().toString());
-                                        tInfo.setdate(mDate.getText().toString());
-                                        tInfo.setitem(mItem.getText().toString());
-                                        tInfo.setowner(mOwner.getText().toString());
-                                        tInfo.setImageUrl(downloadUrl.toString());
-
-                                        Log.d("latte", downloadUrl.toString());
-                                        //tRef.child("image").setValue(downloadUrl.toString());
-
-                                        String borrowerUN = mBorrower.getText().toString();
-                                        String ownerUN = mOwner.getText().toString();
+                                    UploadTask uploadTask = filepath.putFile(mImageUri);
+                                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
 
-                                        tRef.child(ownerUN).push().setValue(tInfo);
-                                        tRef.child(borrowerUN).push().setValue(tInfo);
+                                            FirebaseDatabase trial = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+                                            DatabaseReference tRef = trial.getReference("users");
 
-                                        sharedPref.edit().remove("inTransaction").commit();
-                                        startActivity(new Intent(NewTransaction.this, MainActivity.class));
-                                        finish();
-                                    }
-                                });
 
+
+                                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                            TransFirInfo tInfo = new TransFirInfo();
+                                            tInfo.setborrower(mBorrower.getText().toString());
+                                            tInfo.setdate(mDate.getText().toString());
+                                            tInfo.setitem(mItem.getText().toString());
+                                            tInfo.setowner(mOwner.getText().toString());
+                                            tInfo.setImageUrl(downloadUrl.toString());
+
+                                            Log.d("latte", downloadUrl.toString());
+                                            //tRef.child("image").setValue(downloadUrl.toString());
+
+                                            String borrowerUN = mBorrower.getText().toString();
+                                            String ownerUN = mOwner.getText().toString();
+
+
+                                            tRef.child(ownerUN).push().setValue(tInfo);
+                                            tRef.child(borrowerUN).push().setValue(tInfo);
+
+                                            sharedPref.edit().remove("inTransaction").commit();
+                                            startActivity(new Intent(NewTransaction.this, MainActivity.class));
+                                            finish();
+                                        }
+                                    });
+
+
+                                } else {
+                                    FirebaseDatabase trial = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
+                                    DatabaseReference pRef = trial.getReference("users");
+                                    TransFirInfo pInfo = new TransFirInfo();
+                                    pInfo.setborrower(mBorrower.getText().toString());
+                                    pInfo.setdate(mDate.getText().toString());
+                                    pInfo.setitem(mItem.getText().toString());
+                                    pInfo.setowner(mOwner.getText().toString());
+                                    pInfo.setImageUrl("https://firebasestorage.googleapis.com/v0/b/lendit-af1e0.appspot.com/o/missing-item-clipart-1.jpg?alt=media&token=c441afb1-824f-4fd6-b871-4e78fb459fdf");
+                                    String borrowerUN = mBorrower.getText().toString();
+                                    String ownerUN = mOwner.getText().toString();
+
+
+                                    pRef.child(ownerUN).push().setValue(pInfo);
+                                    pRef.child(borrowerUN).push().setValue(pInfo);
+
+                                    sharedPref.edit().remove("inTransaction").commit();
+                                    startActivity(new Intent(NewTransaction.this, MainActivity.class));
+                                    finish();
+                                }
+
+
+
+                            } else {
+                                if ((!snapshot.hasChild(mBorrower.getText().toString())) && (!snapshot.hasChild(mOwner.getText().toString()))) {
+                                    Toast.makeText(NewTransaction.this, "Both the user and borrower are not registered", Toast.LENGTH_LONG).show();
+                                } else if (!(snapshot.hasChild(mBorrower.getText().toString()))) {
+                                    Toast.makeText(NewTransaction.this, "This borrower is not registered", Toast.LENGTH_LONG).show();
+                                } else if (!(snapshot.hasChild(mOwner.getText().toString()))) {
+                                    Toast.makeText(NewTransaction.this, "This owner is not registered", Toast.LENGTH_LONG).show();
+                                }
 
                             }
-
-
-
-
-//                            Intent intent = new Intent(NewTransaction.this, MainActivity.class);
-//                            startActivity(intent);
-//                            finish();
                         }
-                        else{
-                            if ((!snapshot.hasChild(mBorrower.getText().toString()))&&(!snapshot.hasChild(mOwner.getText().toString()))){
-                                Toast.makeText(NewTransaction.this, "Both the user and borrower are not registered", Toast.LENGTH_LONG).show();
-                            }
 
-                            else if(!(snapshot.hasChild(mBorrower.getText().toString()))) {
-                                Toast.makeText(NewTransaction.this, "This borrower is not registered", Toast.LENGTH_LONG).show();
-                            }
-
-                            else if(!(snapshot.hasChild(mOwner.getText().toString()))) {
-                                Toast.makeText(NewTransaction.this, "This owner is not registered", Toast.LENGTH_LONG).show();
-                            }
-
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            sharedPref.edit().remove("inTransaction").commit();
+                            finish();
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        sharedPref.edit().remove("inTransaction").commit();
-                        finish();
-                    }
-                });
-
-//                DatabaseReference findUsername = mRef.getReference("usernames");
-//                // add the borrower username as a transaction
-//                String borrowerUsername = mBorrower.getText().toString();
-//                String borrowerId = findUsername.child(borrowerUsername).getKey();
-//                DatabaseReference nRef = myRef.child(borrowerId);
-//                String key = nRef.child(borrowerId).push().getKey();
-//                nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
-//                nRef.child(key).child("date").setValue(mDate.getText().toString());
-//                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
-//                nRef.child(key).child("item").setValue(mItem.getText().toString());
-//
-//
-//
-//                String ownerUsername = mOwner.getText().toString();
-//                String ownerId = findUsername.child(ownerUsername).getKey();
-//                DatabaseReference oRef = myRef.child(ownerId);
-//                //String keyO = nRef.child(borrowerId).push().getKey();
-//                String keyO = oRef.child(borrowerId).push().getKey();
-//                oRef.child(keyO).child("borrower").setValue(mBorrower.getText().toString());
-//                oRef.child(keyO).child("date").setValue(mDate.getText().toString());
-//                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
-//                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
-
-
-
-                // add the owner username as a transaction
+                    });
 
 
 
 
-                EventObject ev = new EventObject(mBorrower.getText().toString() + " returns " + mItem.getText().toString() + " to " + mOwner.getText().toString(), mDate.getText().toString());
-                SQLiteJDBC mDbHelper = new SQLiteJDBC(thisActivity);
+                    // add the owner username as a transaction
 
 
+                    EventObject ev = new EventObject(mBorrower.getText().toString() + " returns " + mItem.getText().toString() + " to " + mOwner.getText().toString(), mDate.getText().toString());
+                    SQLiteJDBC mDbHelper = new SQLiteJDBC(thisActivity);
 
-                mDbHelper.addEvent(ev);
-                mDbHelper.closeDB();
 
-                //once the transaction is completed, the app will no longer return to NewTransaction
-                sharedPref.edit().remove("inTransaction").commit();
+                    mDbHelper.addEvent(ev);
+                    mDbHelper.closeDB();
+
+                    sharedPref.edit().remove("inTransaction").commit();
+
+                }
 
             }
         });
