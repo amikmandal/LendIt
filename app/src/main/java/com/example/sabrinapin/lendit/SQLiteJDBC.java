@@ -30,7 +30,11 @@ public class SQLiteJDBC extends SQLiteOpenHelper{
     private static final String KEY_DATE = "DATE";
     private static final String TABLE_NAME = "EVENTS";
     private static final int GLOBAL_ID = 1;
+    private SQLiteDatabase db;
 
+    public static String getTableName() {
+        return TABLE_NAME;
+    }
 
     private static final String CREATE_TABLE = "CREATE TABLE EVENTS " +
             "(ID INTEGER PRIMARY KEY NOT NULL," +
@@ -42,16 +46,19 @@ public class SQLiteJDBC extends SQLiteOpenHelper{
             + " TEXT," + KEY_DATE + " TEXT" + ")";
 
     private static final String SQL_DELETE_TABLE =
-            "DROP TABLE IF EXISTS " + DATABASE_NAME;
+            "DROP TABLE IF EXISTS " + TABLE_NAME;
+    private final Context mContext;
 
     public SQLiteJDBC(Context c) {
         // don't pass in a SQLiteCursorFactory
         super(c, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = c;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TABLE);
+        this.db = db;
     }
 
     @Override
@@ -59,6 +66,11 @@ public class SQLiteJDBC extends SQLiteOpenHelper{
         db.execSQL(SQL_DELETE_TABLE);
         onCreate(db);
     }
+
+    public void deleteDB()  {
+        db.execSQL("delete from "+ TABLE_NAME);;
+    }
+
 
     public void addEvent(EventObject event) {
         // Create and/or open the database for writing
@@ -123,7 +135,7 @@ public class SQLiteJDBC extends SQLiteOpenHelper{
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
-        DateFormat format = new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z", Locale.ENGLISH);
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
             do {

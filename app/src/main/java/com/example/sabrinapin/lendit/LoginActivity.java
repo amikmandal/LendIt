@@ -197,6 +197,7 @@ public class LoginActivity extends AppCompatActivity  {
                                     public void onDataChange(DataSnapshot snapshot) {
                                         if (snapshot.hasChild(userID)) {
                                             Intent curintent = new Intent(LoginActivity.this, MainActivity.class);
+                                            curintent.putExtra("rebuild", true);
                                             startActivity(curintent);
                                             finish();
 

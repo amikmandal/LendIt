@@ -6,26 +6,38 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @SuppressLint("SimpleDateFormat")
 public class CaldroidSampleActivity extends AppCompatActivity {
     private boolean undo = false;
     private CaldroidFragment caldroidFragment;
     private CaldroidFragment dialogCaldroidFragment;
-
+    private ScrollView mScrollView;
+    private Map<String, ArrayList<String>> dates;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+    private CalendarDisplayAdapter mAdapter;
+    private RecyclerView mRecyclerView;
     private void setCustomResourceForDates() {
         Calendar cal = Calendar.getInstance();
 
@@ -39,12 +51,45 @@ public class CaldroidSampleActivity extends AppCompatActivity {
 //        Date greenDate = cal.getTime();
 
         if (caldroidFragment != null) {
-//            ColorDrawable blue = new ColorDrawable(getResources().getColor(R.color.colorBlue));
+            ColorDrawable red = new ColorDrawable(getResources().getColor(R.color.caldroid_light_red));
 //            ColorDrawable green = new ColorDrawable(Color.GREEN);
 //            caldroidFragment.setBackgroundDrawableForDate(blue, blueDate);
 //            caldroidFragment.setBackgroundDrawableForDate(green, greenDate);
 //            caldroidFragment.setTextColorForDate(R.color.colorWhite, blueDate);
 //            caldroidFragment.setTextColorForDate(R.color.colorWhite, greenDate);
+
+            for(String s : dates.keySet())  {
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println(s);
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                Date d= new Date();
+                try {
+                     d= formatter.parse(s);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                caldroidFragment.setBackgroundDrawableForDate(red, d);
+                caldroidFragment.setTextColorForDate(R.color.caldroid_white, d);
+
+            }
+
+
+
+
         }
     }
 
@@ -53,7 +98,25 @@ public class CaldroidSampleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_caldroid_sample);
 
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+
+
+        mRecyclerView = findViewById(R.id.mRecyclerView);
+
+        SQLiteJDBC sql = new SQLiteJDBC(this);
+        List<EventObject> eventObjects = sql.getAllEvents();
+         dates = new HashMap<String, ArrayList<String>>();
+
+        for(EventObject eo : eventObjects)  {
+            if(dates.get(eo.getDate()) == null)  {
+                dates.put(eo.getDate(), new ArrayList<String>());
+            }
+            dates.get(eo.getDate()).add(eo.getTitle());
+            dates.put(eo.getDate(), dates.get(eo.getDate()));
+        }
+
+
+
+
 
         // Setup caldroid fragment
         // **** If you want normal CaldroidFragment, use below line ****
@@ -105,8 +168,53 @@ public class CaldroidSampleActivity extends AppCompatActivity {
 
             @Override
             public void onSelectDate(Date date, View view) {
-                Toast.makeText(getApplicationContext(), formatter.format(date),
-                        Toast.LENGTH_SHORT).show();
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println(formatter.format(date));
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+                System.out.println("**********");
+
+                if(dates.keySet().contains(formatter.format(date))) {
+
+
+                    mAdapter = new CalendarDisplayAdapter(getApplicationContext(), dates.get(formatter.format(date)));
+                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    Toast.makeText(getApplicationContext(), "SUCCESS", Toast.LENGTH_LONG).show();
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+                    System.out.println("~~~~~~~~~~~");
+
+
+
+                }
+                else {
+                    mRecyclerView.setLayoutManager(null);
+                }
+
             }
 
             @Override
@@ -137,7 +245,6 @@ public class CaldroidSampleActivity extends AppCompatActivity {
         // Setup Caldroid
         caldroidFragment.setCaldroidListener(listener);
 
-        final TextView textView = (TextView) findViewById(R.id.textview);
 
 //        final Button customizeButton = (Button) findViewById(R.id.customize_button);
 //

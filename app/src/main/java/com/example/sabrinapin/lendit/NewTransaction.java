@@ -24,7 +24,12 @@ import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.EventReminder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,7 +42,9 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Ref;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
@@ -48,9 +55,9 @@ import static com.example.sabrinapin.lendit.LoginActivity.userID;
 public class NewTransaction extends AppCompatActivity {
 
 
-    EditText mOwner, mItem, mDate, mBorrower;
+    EditText mOwner, mItem, mBorrower;
     Button mTakePicture, mUploadPicture, mAddToCalendar;
-    TextView mReturnDate, mCompleteTransaction, mCancelTransaction;
+    TextView mReturnDate, mCompleteTransaction, mCancelTransaction, mDate;
     ImageView mObjectView;
     private String mPhotoDirectory;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -105,6 +112,12 @@ public class NewTransaction extends AppCompatActivity {
 
 
 
+        mAddToCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addEvent();
+            }
+        });
 
 
 
@@ -371,5 +384,29 @@ public class NewTransaction extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    public void addEvent()  {
+        java.util.Calendar calendarEvent = java.util.Calendar.getInstance();
+        Intent i = new Intent(Intent.ACTION_EDIT);
+        i.setType("vnd.android.cursor.item/event");
+
+        String myDate = mDate.getText().toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        Date date = null;
+        try {
+            date = sdf.parse(myDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long millis = date.getTime();
+
+        i.putExtra("beginTime", millis);
+        i.putExtra("allDay", true);
+        i.putExtra("rule", "FREQ=YEARLY");
+        i.putExtra("endTime", millis + 60 * 60 * 1000);
+        i.putExtra("title", mBorrower.getText().toString() + " returns " + mItem.getText().toString() + " to " + mOwner.getText().toString());
+        startActivity(i);
+    }
+
 
 }

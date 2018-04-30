@@ -3,6 +3,7 @@ package com.example.sabrinapin.lendit;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private Button logout;
     private static final String TAG = "MainActivity";
     private TransactionAdapter mAdapter;
+
+    private boolean rebuild;
 
     String[] mPeople;
     String[] mObjects;
@@ -92,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.mRecyclerView);
         mFirebaseDatabase = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
         //TAKING SHARED PREF BACK
+        rebuild = getIntent().getBooleanExtra("rebuild", false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
         USER_FIRST_NAME = sharedPref.getString("firstName", "dumb");
@@ -101,6 +108,38 @@ public class MainActivity extends AppCompatActivity {
         FDB = FirebaseDatabase.getInstance();
 
         myRef = mFirebaseDatabase.getReference().child("usernames").child(userID);
+
+
+
+//        List<EventObject> eObjs = sql.getAllEvents();
+//        for(EventObject eobj : eObjs)  {
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println(eobj.toString());
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//        }
+//
+////        sql.deleteDB();
+//
+//        List<EventObject> eObjs2 = sql.getAllEvents();
+//        for(EventObject eobj : eObjs2)  {
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println(eobj.toString());
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//            System.out.println("*****");
+//        }
+
+
 
 //        logout = findViewById(R.id.button2);
 //        //setup using preference manager
@@ -173,18 +212,24 @@ public class MainActivity extends AppCompatActivity {
                 mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                       int length = (int) dataSnapshot.getChildrenCount();
+                        SQLiteJDBC db = new SQLiteJDBC(getApplicationContext());
+                        int length = (int) dataSnapshot.getChildrenCount();
 
                         ArrayList<TransFirInfo> myArr = new ArrayList<TransFirInfo>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
                             TransFirInfo user = snapshot.getValue(TransFirInfo.class);
+                            if(rebuild)  {
+                                EventObject e = new EventObject(user.getborrower() + " returns " + user.getitem() + " to " + user.getowner(), user.getdate());
+                                db.addEvent(e);
+                            }
                             myArr.add(0, user);
                             Log.d("borrower", user.getitem());
 
 
                         }
+                        db.closeDB();
+                        rebuild = false;
                         mAdapter = new TransactionAdapter(getApplicationContext(), myArr);
                         mRecyclerView.setAdapter(mAdapter);
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -245,6 +290,31 @@ public class MainActivity extends AppCompatActivity {
         sharedPref.edit().remove("firstName").commit();
         sharedPref.edit().remove("lastName").commit();
         sharedPref.edit().remove("inTransaction").commit();
+
+        SQLiteJDBC sql = new SQLiteJDBC(getApplicationContext());
+
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println(sql.getAllEvents().size());
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+        System.out.println("*****");
+
+        sql.onUpgrade(sql.getReadableDatabase(), 1, 2);
+
+
+//        getApplicationContext().deleteDatabase(SQLiteJDBC.getTableName());
 
         //takes us back to LoginActivity
         startActivity(new Intent(this, LoginActivity.class));
@@ -329,6 +399,31 @@ public class MainActivity extends AppCompatActivity {
 //        });
 //
 //    }
+
+    //Create Menu
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    //Selecting Menu
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.LogOut:
+                logOut();
+                return true;
+            case R.id.Refresh:
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
 
 
 }
