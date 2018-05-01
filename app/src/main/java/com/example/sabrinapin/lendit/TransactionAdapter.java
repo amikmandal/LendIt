@@ -36,47 +36,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     final Context mContext;
     List<TransFirInfo> list;
-//    String[] mPeople;
-//    String [] mDates;
-//    String[] mObjects;
-//    Uri[] mUris;
-//
-//
-//    @Override
-//    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View row = mInflater.inflate(R.layout.transaction_holder, parent, false);
-//
-//        final ViewHolder transactionHolder = new ViewHolder(row);
-//
-//        transactionHolder.mButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //TODO info button activity
-//            }
-//        });
-//
-//        return transactionHolder;
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(ViewHolder holder, int pos) {
-//        Drawable infoArtwork = mContext.getDrawable(android.R.drawable.ic_dialog_info);
-//
-//        holder.mImageView.setImageURI(mUris[pos]);
-//        holder.mButton.setImageDrawable(infoArtwork);
-//        holder.mDate.setText(mDates[pos]);
-//        holder.mPerson.setText(mPeople[pos]);
-//        holder.mObject.setText(mObjects[pos]);
-//
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return (mPeople == null) ? 0 : mPeople.length;
-//    }
-//
-//
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout mNamesLinearLayout;
         LinearLayout mInfoLinearLayout;
@@ -106,14 +66,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
     }
-//
-//    public TransactionAdapter(Context c, TransFirInfo myInfo) {
-//        mContext = c;
-//        mPeople = people;
-//        mObjects = objects;
-//        mDates = dates;
-//        mUris = images;
-//    }
+
 
 
 
@@ -147,6 +100,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                 .placeholder(R.mipmap.ic_launcher_round)
                 .error(R.mipmap.ic_launcher_round);
 
+        // Uses glide to set an image to a URI
         Glide.with(getApplicationContext()).load(data.getImageUrl()).apply(options).into(holder.mImageView);
 
 //                setImageURI(Uri.parse("https://firebasestorage.googleapis.com/v0/b/lendit-af1e0.appspot.com/o/JPEG_20180429_024056_2692024546603169112.jpg?alt=media&token=7332a850-2039-4a87-8a1f-1605aa324f37"));

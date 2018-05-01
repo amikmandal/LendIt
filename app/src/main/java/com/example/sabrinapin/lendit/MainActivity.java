@@ -162,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         if(sharedPref.contains("inTransaction")){
             intent = new Intent(this, NewTransaction.class);
             this.startActivity(intent);
-            Toast.makeText(this, "inTransaction is in sharedPref: FIX THIS", Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -174,10 +173,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-//        mPeople = new String[transactionList.size()];
-//        mObjects = new String[transactionList.size()];
-//        mDates = new String[transactionList.size()];
-//        mUris = new Uri[transactionList.size()];
+
 
 
 
@@ -266,17 +262,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    private void showData(DataSnapshot dataSnapshot) {
-//        for (DataSnapshot ds: dataSnapshot.getChildren()){
-//            Log.d("firebase", ds.child(userID).toString()  + ds.child(userID));
-//    UsernameInformation uInfo = ds.child(userID).getValue(UsernameInformation.class);
-//
-////    uInfo.setName(ds.child(userID).getValue(UsernameInformation.class).getName());
-////    uInfo.setLenditUsername(ds.child(userID).getValue(UsernameInformation.class).getLenditUsername());
-//    ArrayList <String> thisList = new ArrayList ();
-//    thisList.add(uInfo.getLenditUsername());
-//    thisList.add(uInfo.getName());
-//    mTextMessage.setText(thisList.toString());
+
 
 
 //        }
@@ -326,66 +312,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-//    public void initList(ArrayList<TransFirInfo> transactionList)  {
-//
-//
-//        mPeople = new String[transactionList.length];
-//        mObjects = new String[transactionList.length];
-//        mDates = new String[transactionList.length];
-//        mUris = new Uri[transactionList.length];
-//
-//        if(transactionList.length > 0) {
-//            System.out.println("Did we make it");
-//            for (int i = 0; i < transactionList.length; i++) {
-//                mPeople[i] = transactionList[i].getowner();
-//                mObjects[i] = transactionList[i].getitem();
-//                mDates[i] = transactionList[i].getdate();
-//                mUris[i] = Uri.parse(transactionList[i].getImageUrl());
-//
-//            }
-//        }
-//
-//        mAdapter.notifyDataSetChanged();
-//
-//    }
-
-//    void getDateFireBase(){
-//
-//        DBR = FDB.getReference("https://lendit-af1e0.firebaseio.com/").child("users");
-//
-//        DBR.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//
-//                TransFirInfo myObject = dataSnapshot.getValue(TransFirInfo.class);
-//                myArr.add(myObject);
-//                mRecyclerView.setAdapter(new TransactionAdapter(getApplicationContext(), myArr));
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//    }
 
     //Create Menu
     public boolean onCreateOptionsMenu(Menu menu) {

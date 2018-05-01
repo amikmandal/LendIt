@@ -151,153 +151,13 @@ public class NewTransaction extends AppCompatActivity {
 
 
 
-//        mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//                mRef = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
-//
-//                Log.d("wonka", mImageUri.toString());
-//
-//                //Checks if the borrower exists
-//                DatabaseReference myUsernames = mRef.getReference("checkNames");
-//
-//                myUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot snapshot) {
-//
-//
-//                        if ((snapshot.hasChild(mBorrower.getText().toString()))&&(snapshot.hasChild(mOwner.getText().toString()))) {
-//                            FirebaseDatabase rRefs = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
-//                            DatabaseReference tRef = rRefs.getReference("checkNames");
-//                                DatabaseReference pushRef = rRefs.getReference("users");
-//
-//
-//                            if (mImageUri != null) {
-//
-//                                StorageReference filepath = storageRef.child(mImageUri.getLastPathSegment());
-//                                Log.d("firepath", filepath.toString());
-//
-//                                //Toast.makeText(thisActivity, "hey its working", Toast.LENGTH_SHORT).show();
-//
-//                                UploadTask uploadTask = filepath.putFile(mImageUri);
-//                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                                    @Override
-//                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//
-//                                        FirebaseDatabase trial = FirebaseDatabase.getInstance("https://lendit-af1e0.firebaseio.com/");
-//                                        DatabaseReference tRef = trial.getReference("users");
-//
-//                                        Toast.makeText(thisActivity, "dafuq", Toast.LENGTH_SHORT).show();
-//                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-//                                        TransFirInfo tInfo = new TransFirInfo();
-//                                        tInfo.setborrower(mBorrower.getText().toString());
-//                                        tInfo.setdate(mDate.getText().toString());
-//                                        tInfo.setitem(mItem.getText().toString());
-//                                        tInfo.setowner(mOwner.getText().toString());
-//                                        tInfo.setImageUrl(downloadUrl.toString());
-//
-//                                        Log.d("latte", downloadUrl.toString());
-//                                        //tRef.child("image").setValue(downloadUrl.toString());
-//
-//                                        String borrowerUN = mBorrower.getText().toString();
-//                                        String ownerUN = mOwner.getText().toString();
-//
-//
-//                                        tRef.child(ownerUN).push().setValue(tInfo);
-//                                        tRef.child(borrowerUN).push().setValue(tInfo);
-//
-//                                        sharedPref.edit().remove("inTransaction").commit();
-//                                        startActivity(new Intent(NewTransaction.this, MainActivity.class));
-//                                        finish();
-//                                    }
-//                                });
-//
-//
-//                            }
-//
-//
-//
-//
-////                            Intent intent = new Intent(NewTransaction.this, MainActivity.class);
-////                            startActivity(intent);
-////                            finish();
-//                        }
-//                        else{
-//                            if ((!snapshot.hasChild(mBorrower.getText().toString()))&&(!snapshot.hasChild(mOwner.getText().toString()))){
-//                                Toast.makeText(NewTransaction.this, "Both the user and borrower are not registered", Toast.LENGTH_LONG).show();
-//                            }
-//
-//                            else if(!(snapshot.hasChild(mBorrower.getText().toString()))) {
-//                                Toast.makeText(NewTransaction.this, "This borrower is not registered", Toast.LENGTH_LONG).show();
-//                            }
-//
-//                            else if(!(snapshot.hasChild(mOwner.getText().toString()))) {
-//                                Toast.makeText(NewTransaction.this, "This owner is not registered", Toast.LENGTH_LONG).show();
-//                            }
-//
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                        sharedPref.edit().remove("inTransaction").commit();
-//                        finish();
-//                    }
-//                });
-//
-////                DatabaseReference findUsername = mRef.getReference("usernames");
-////                // add the borrower username as a transaction
-////                String borrowerUsername = mBorrower.getText().toString();
-////                String borrowerId = findUsername.child(borrowerUsername).getKey();
-////                DatabaseReference nRef = myRef.child(borrowerId);
-////                String key = nRef.child(borrowerId).push().getKey();
-////                nRef.child(key).child("borrower").setValue(mBorrower.getText().toString());
-////                nRef.child(key).child("date").setValue(mDate.getText().toString());
-////                nRef.child(key).child("owner").setValue(mOwner.getText().toString());
-////                nRef.child(key).child("item").setValue(mItem.getText().toString());
-////
-////
-////
-////                String ownerUsername = mOwner.getText().toString();
-////                String ownerId = findUsername.child(ownerUsername).getKey();
-////                DatabaseReference oRef = myRef.child(ownerId);
-////                //String keyO = nRef.child(borrowerId).push().getKey();
-////                String keyO = oRef.child(borrowerId).push().getKey();
-////                oRef.child(keyO).child("borrower").setValue(mBorrower.getText().toString());
-////                oRef.child(keyO).child("date").setValue(mDate.getText().toString());
-////                oRef.child(keyO).child("owner").setValue(mOwner.getText().toString());
-////                oRef.child(keyO).child("item").setValue(mItem.getText().toString());
-//
-//
-//
-//                // add the owner username as a transaction
-//
-//
-//
-//
-//                EventObject ev = new EventObject(mBorrower.getText().toString() + " returns " + mItem.getText().toString() + " to " + mOwner.getText().toString(), mDate.getText().toString());
-//                SQLiteJDBC mDbHelper = new SQLiteJDBC(thisActivity);
-//
-//
-//
-//                mDbHelper.addEvent(ev);
-//                mDbHelper.closeDB();
-//
-//                //once the transaction is completed, the app will no longer return to NewTransaction
-//                sharedPref.edit().remove("inTransaction").commit();
-//
-//            }
-//        });
 
         mCompleteTransaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-
+            //checks if fields are all filled out
                 if (mBorrower.getText().toString().matches("")||mItem.getText().toString().matches("")||mOwner.getText().toString().matches("")||mDate.getText().toString().matches("")) {
                     Toast.makeText(thisActivity, "one or more of your fields is empty", Toast.LENGTH_SHORT).show();
 
@@ -305,6 +165,7 @@ public class NewTransaction extends AppCompatActivity {
 
                 else{
 
+                    // upload the event
                     Toast.makeText(thisActivity, "Processing Transaction", Toast.LENGTH_LONG).show();
 
                     UploadFilesTask up = new UploadFilesTask();
@@ -352,8 +213,11 @@ public class NewTransaction extends AppCompatActivity {
         return null;
     }
 
+    // uses a date picker
     private DatePickerDialog.OnDateSetListener dPickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
+       // sets a datepicker item
+
         public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
             year = i;
             month = i1;

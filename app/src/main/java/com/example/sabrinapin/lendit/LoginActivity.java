@@ -124,7 +124,6 @@ public class LoginActivity extends AppCompatActivity  {
                 Log.d("user---------", sharedPref.getString("user", null));
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.putExtra("username", sharedPref.getString("user", null));
-                Toast.makeText(this, "Passing through intent", Toast.LENGTH_SHORT).show();
                 intent.putExtra("firstname", sharedPref.getString("firstName", "Amik"));
                 intent.putExtra("lastname", sharedPref.getString("lastName","Mandal"));
                 intent.putExtra("id", sharedPref.getString("user", "00000000Liam"));

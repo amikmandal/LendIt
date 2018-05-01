@@ -5,6 +5,9 @@ package com.example.sabrinapin.lendit;
  */
 
 public class TransFirInfo {
+
+    // Sets an object for the Transacttion Firebase Informaiton
+    // Allows each of the fields to be retrieved as an object from firebase
     private String borrower;
     private String date;
     private String item;
