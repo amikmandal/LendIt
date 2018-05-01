@@ -8,19 +8,13 @@
     tools:context="com.example.sabrinapin.lendit.MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
-    <!--<Button-->
-        <!--android:id="@+id/button2"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:text="Button" />-->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="455dp"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:background="@null"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,13 +33,5 @@
         app:menu="@menu/navigation" >
 
     </android.support.design.widget.BottomNavigationView>
-
-    <!--<TextView-->
-        <!--android:id="@+id/write"-->
-        <!--android:layout_width="300dp"-->
-        <!--android:layout_height="300dp"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:text="TextView" />-->
-
 
 </RelativeLayout>

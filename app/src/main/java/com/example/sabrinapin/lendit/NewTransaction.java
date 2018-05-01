@@ -2,6 +2,8 @@ package com.example.sabrinapin.lendit;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -17,14 +19,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Calendar;
 
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.api.services.calendar.Calendar;
+//import com.google.api.services.calendar.Calendar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,15 +49,21 @@ import java.util.Date;
 import static com.example.sabrinapin.lendit.LoginActivity.USER_FIRST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.USER_LAST_NAME;
 import static com.example.sabrinapin.lendit.LoginActivity.userID;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 
 public class NewTransaction extends AppCompatActivity {
 
 
-    EditText mOwner, mItem, mDate, mBorrower;
-    Button mTakePicture, mUploadPicture, mAddToCalendar;
+    EditText mOwner, mItem, mBorrower;
+    Button mTakePicture, mDate, mAddToCalendar;
     TextView mReturnDate, mCompleteTransaction, mCancelTransaction;
     ImageView mObjectView;
+    ScrollView mScrollView;
+    LinearLayout mLinearLayout;
+
     private String mPhotoDirectory;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
@@ -69,10 +81,10 @@ public class NewTransaction extends AppCompatActivity {
     public StorageReference storageRef;
     public File mphotoFile = null;
     private Uri mImageUri = null;
+    private int year, month, date;
+    static final int DIALOG_ID = 0;
+
     Calendar service;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +101,15 @@ public class NewTransaction extends AppCompatActivity {
         mCancelTransaction = findViewById(R.id.cancelTransaction);
         mObjectView = findViewById(R.id.objectImage);
         mCompleteTransaction = findViewById(R.id.completeTransaction);
+        mScrollView = findViewById(R.id.scrollview);
+        mLinearLayout = findViewById(R.id.linearlayoutscrollview);
+
+        mDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog(DIALOG_ID);
+            }
+        });
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = getIntent();
@@ -273,6 +294,29 @@ public class NewTransaction extends AppCompatActivity {
 
     }
 
+    @Override
+    protected Dialog onCreateDialog(int id)
+    {
+        if(id==DIALOG_ID)
+        {
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            int currentMonth=Calendar.getInstance().get(Calendar.MONTH);
+            int currentDate=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);;
+            //Toast.makeText(this, formattedDate.substring(5,6), Toast.LENGTH_SHORT).show();
+            return new DatePickerDialog(this, dPickerListener, currentYear , currentMonth, currentDate);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener dPickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+            year = i;
+            month = i1+1;
+            date = i2;
+            mDate.setText(month+"/"+date+"/"+year);
+        }
+    };
 
 
     private void dispatchTakePictureIntent() {

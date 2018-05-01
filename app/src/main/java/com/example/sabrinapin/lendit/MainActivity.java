@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
@@ -157,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("firebase", dataSnapshot.toString());
 
                 UsernameInformation mInfo = dataSnapshot.getValue(UsernameInformation.class);
-                Log.d("minfo", mInfo.getname());
+//                Log.d("minfo", mInfo.getname());
 
-                Log.d("username", mInfo.getlenditUsername());
+//                Log.d("username", mInfo.getlenditUsername());
                 String myUsername = mInfo.getlenditUsername();
                 //Log.d("instance", mUsername);
 
@@ -250,6 +252,33 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
+
+    //Create Menu
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    //Selecting Menu
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.LogOut:
+                logOut();
+                return true;
+            case R.id.Refresh:
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+
 
     public void addTransaction(Transaction tr) {transactionList.add(tr);}
 

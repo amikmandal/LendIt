@@ -16,7 +16,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_home">Home</string>
     <string name="title_new_transaction">New Transaction</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">Calendar</string>
     <string name="facebook_app_id">1789564747753653</string>
     <string name="fb_login_protocol_scheme">fb1789564747753653</string>
 
