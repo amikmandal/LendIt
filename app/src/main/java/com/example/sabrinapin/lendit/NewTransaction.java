@@ -248,7 +248,7 @@ public class NewTransaction extends AppCompatActivity {
 
         public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
             year = i;
-            month = i1;
+            month = i1 + 1;
             date = i2;
             String m = (month < 10) ? "0"+month : month + "";
             String y = year + "";
