@@ -182,81 +182,22 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         //Creates an ArrayList of TransFirInfo objects to be later used in creating a new Transaction Adapter
-        ArrayList<TransFirInfo> trialList = new ArrayList<TransFirInfo>();
-        TransFirInfo first = new TransFirInfo();
-        first.setowner("werido");
-        first.setdate("3/3/3");
-        first.setborrower("people");
-        first.setitem("stuff");
-        first.setImageUrl("https://firebasestorage.googleapis.com/v0/b/lendit-af1e0.appspot.com/o/JPEG_20180429_074637_1948933449012095423.jpg?alt=media&token=720d7752-e0f3-4c5e-84b1-7e18354580cb");
-        trialList.add(first);
+//        ArrayList<TransFirInfo> trialList = new ArrayList<TransFirInfo>();
+//        TransFirInfo first = new TransFirInfo();
+//        first.setowner("werido");
+//        first.setdate("3/3/3");
+//        first.setborrower("people");
+//        first.setitem("stuff");
+//        first.setImageUrl("https://firebasestorage.googleapis.com/v0/b/lendit-af1e0.appspot.com/o/JPEG_20180429_074637_1948933449012095423.jpg?alt=media&token=720d7752-e0f3-4c5e-84b1-7e18354580cb");
+//        trialList.add(first);
+//
+//        //Creates new TransactionAdapter
+//        mAdapter = new TransactionAdapter(this, trialList);
+//        mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        //Creates new TransactionAdapter
-        mAdapter = new TransactionAdapter(this, trialList);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //this is called once wwith the initial value and again when this is updated
-//            showData(dataSnapshot);
-                Log.d("firebase", dataSnapshot.toString());
+        refresh();
 
-                UsernameInformation mInfo = dataSnapshot.getValue(UsernameInformation.class);
-                Log.d("minfo", mInfo.getname());
-
-                Log.d("username", mInfo.getlenditUsername());
-                String myUsername = mInfo.getlenditUsername();
-                //Log.d("instance", mUsername);
-
-
-                //Places the username in Shared preferences, so that we can access it through the other activity
-                mtransRef = mFirebaseDatabase.getReference().child("users").child(myUsername);
-
-                //Catches an exception if the user doesn't exist in the database: leave the array as an empty one if the data does not exist
-
-
-                mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        SQLiteJDBC db = new SQLiteJDBC(getApplicationContext());
-                        int length = (int) dataSnapshot.getChildrenCount();
-
-                        ArrayList<TransFirInfo> myArr = new ArrayList<TransFirInfo>();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                            TransFirInfo user = snapshot.getValue(TransFirInfo.class);
-                            if(rebuild)  {
-                                EventObject e = new EventObject(user.getborrower() + " returns " + user.getitem() + " to " + user.getowner(), user.getdate());
-                                db.addEvent(e);
-                            }
-                            myArr.add(0, user);
-                            Log.d("borrower", user.getitem());
-
-
-                        }
-                        db.closeDB();
-                        rebuild = false;
-                        mAdapter = new TransactionAdapter(getApplicationContext(), myArr);
-                        mRecyclerView.setAdapter(mAdapter);
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                        mRecyclerView.setAdapter(new TransactionAdapter(getApplicationContext(), myArr));
-                        //Log.d("arrayCheck", myArr.get(0).toString());
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
 
     }
@@ -329,13 +270,81 @@ public class MainActivity extends AppCompatActivity {
                 logOut();
                 return true;
             case R.id.Refresh:
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
+//                startActivity(new Intent(this, MainActivity.class));
+//                finish();
+                refresh();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+
+
+    public void refresh()  {
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //this is called once wwith the initial value and again when this is updated
+//            showData(dataSnapshot);
+                Log.d("firebase", dataSnapshot.toString());
+
+                UsernameInformation mInfo = dataSnapshot.getValue(UsernameInformation.class);
+                Log.d("minfo", mInfo.getname());
+
+                Log.d("username", mInfo.getlenditUsername());
+                String myUsername = mInfo.getlenditUsername();
+                //Log.d("instance", mUsername);
+
+
+                //Places the username in Shared preferences, so that we can access it through the other activity
+                mtransRef = mFirebaseDatabase.getReference().child("users").child(myUsername);
+
+                //Catches an exception if the user doesn't exist in the database: leave the array as an empty one if the data does not exist
+
+
+                mtransRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        SQLiteJDBC db = new SQLiteJDBC(getApplicationContext());
+                        int length = (int) dataSnapshot.getChildrenCount();
+
+                        ArrayList<TransFirInfo> myArr = new ArrayList<TransFirInfo>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                            TransFirInfo user = snapshot.getValue(TransFirInfo.class);
+                            if(rebuild)  {
+                                EventObject e = new EventObject(user.getborrower() + " returns " + user.getitem() + " to " + user.getowner(), user.getdate());
+                                db.addEvent(e);
+                            }
+                            myArr.add(0, user);
+                            Log.d("borrower", user.getitem());
+
+
+                        }
+                        db.closeDB();
+                        rebuild = false;
+                        mAdapter = new TransactionAdapter(getApplicationContext(), myArr);
+                        mRecyclerView.setAdapter(mAdapter);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(new TransactionAdapter(getApplicationContext(), myArr));
+                        //Log.d("arrayCheck", myArr.get(0).toString());
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

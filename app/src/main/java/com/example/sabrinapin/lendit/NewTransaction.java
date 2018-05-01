@@ -228,8 +228,8 @@ public class NewTransaction extends AppCompatActivity {
 
     private void dispatchTakePictureIntent() {
         System.out.println("HEY");
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        Intent photoPickerIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (photoPickerIntent.resolveActivity(getPackageManager()) != null) {
             System.out.println("YOU");
             // Create the File where the photo should go
 
@@ -244,9 +244,9 @@ public class NewTransaction extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (mphotoFile != null) {
                 System.out.println("YOU");
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".my.package.name.provider",mphotoFile));
+                photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".my.package.name.provider",mphotoFile));
                 System.out.print("NEED");
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(photoPickerIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
     }
