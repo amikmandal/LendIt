@@ -13,9 +13,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">LendIt</string>
     <string name="title_home">Home</string>
-    <string name="title_new_transaction">New Transaction</string>
+    <string name="title_new_transaction">LendIt</string>
     <string name="title_notifications">Calendar</string>
     <string name="facebook_app_id">1789564747753653</string>
     <string name="fb_login_protocol_scheme">fb1789564747753653</string>
@@ -38,6 +38,6 @@
         <item>Jon Bellion</item>
         <item>Chance the Rapper</item>
     </string-array>
-    <string name="title_activity_username">UsernameActivity</string>
+    <string name="title_activity_username">LendIt</string>
 
 </resources>
