@@ -4,6 +4,8 @@ package com.example.sabrinapin.lendit;
  * Created by sramprasad on 4/26/2018.
  */
 
+// Creates a UsernameInfo Object to be stored in firebase
+
 public class UsernameInformation
 {
     private String name;

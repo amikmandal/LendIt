@@ -2,6 +2,8 @@ package com.example.sabrinapin.lendit;
 
 
 public class EventObject {
+
+    //Creates an Event Object for easy storage
     private int id;
     private String title;
     private String date;

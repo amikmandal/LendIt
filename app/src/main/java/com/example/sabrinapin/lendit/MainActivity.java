@@ -102,18 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         myRef = mFirebaseDatabase.getReference().child("usernames").child(userID);
 
-//        logout = findViewById(R.id.button2);
 //        //setup using preference manager
-//        logout.setText("Logout Here "+USER_FIRST_NAME+" "+USER_LAST_NAME+" "+userID);
-//
-//        logout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                logOut();
-//            }
-//        });
-
-        //Toast.makeText(this, mUser.getUSER_FIRST(), Toast.LENGTH_SHORT).show();
 
         if(sharedPref.contains("inTransaction")){
             intent = new Intent(this, NewTransaction.class);
@@ -128,27 +117,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-//        mPeople = new String[transactionList.size()];
-//        mObjects = new String[transactionList.size()];
-//        mDates = new String[transactionList.size()];
-//        mUris = new Uri[transactionList.size()];
+
 
 
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        ArrayList<TransFirInfo> trialList = new ArrayList<TransFirInfo>();
-        TransFirInfo first = new TransFirInfo();
-        first.setowner("werido");
-        first.setdate("3/3/3");
-        first.setborrower("people");
-        first.setitem("shit");
-        first.setImageUrl("https://firebasestorage.googleapis.com/v0/b/lendit-af1e0.appspot.com/o/JPEG_20180429_074637_1948933449012095423.jpg?alt=media&token=720d7752-e0f3-4c5e-84b1-7e18354580cb");
-        trialList.add(first);
-        mAdapter = new TransactionAdapter(this, trialList);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+// sets up the firebase listener
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -176,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                        int length = (int) dataSnapshot.getChildrenCount();
-
+                // adds the newest transactions first to the arraylist
                         ArrayList<TransFirInfo> myArr = new ArrayList<TransFirInfo>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             TransFirInfo user = snapshot.getValue(TransFirInfo.class);
@@ -220,22 +197,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    private void showData(DataSnapshot dataSnapshot) {
-//        for (DataSnapshot ds: dataSnapshot.getChildren()){
-//            Log.d("firebase", ds.child(userID).toString()  + ds.child(userID));
-//    UsernameInformation uInfo = ds.child(userID).getValue(UsernameInformation.class);
-//
-////    uInfo.setName(ds.child(userID).getValue(UsernameInformation.class).getName());
-////    uInfo.setLenditUsername(ds.child(userID).getValue(UsernameInformation.class).getLenditUsername());
-//    ArrayList <String> thisList = new ArrayList ();
-//    thisList.add(uInfo.getLenditUsername());
-//    thisList.add(uInfo.getName());
-//    mTextMessage.setText(thisList.toString());
-
-
-//        }
-
-//    }
 
     private void logOut() {
         LoginManager.getInstance().logOut();
@@ -269,66 +230,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-//    public void initList(ArrayList<TransFirInfo> transactionList)  {
-//
-//
-//        mPeople = new String[transactionList.length];
-//        mObjects = new String[transactionList.length];
-//        mDates = new String[transactionList.length];
-//        mUris = new Uri[transactionList.length];
-//
-//        if(transactionList.length > 0) {
-//            System.out.println("Did we make it");
-//            for (int i = 0; i < transactionList.length; i++) {
-//                mPeople[i] = transactionList[i].getowner();
-//                mObjects[i] = transactionList[i].getitem();
-//                mDates[i] = transactionList[i].getdate();
-//                mUris[i] = Uri.parse(transactionList[i].getImageUrl());
-//
-//            }
-//        }
-//
-//        mAdapter.notifyDataSetChanged();
-//
-//    }
-
-//    void getDateFireBase(){
-//
-//        DBR = FDB.getReference("https://lendit-af1e0.firebaseio.com/").child("users");
-//
-//        DBR.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//
-//                TransFirInfo myObject = dataSnapshot.getValue(TransFirInfo.class);
-//                myArr.add(myObject);
-//                mRecyclerView.setAdapter(new TransactionAdapter(getApplicationContext(), myArr));
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//    }
 
 
 }
